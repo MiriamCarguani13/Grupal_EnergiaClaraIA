@@ -14,7 +14,7 @@
         <module>core-platform</module>
         <module>iam-service</module>
         <module>energiaclara-application</module>
-        <module>backend</module>
+        <module>energiaclara-infrastructure</module>
     </modules>
 
     <properties>
