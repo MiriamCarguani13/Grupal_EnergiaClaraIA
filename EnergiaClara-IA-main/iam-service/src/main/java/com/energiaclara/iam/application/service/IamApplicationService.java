@@ -1,5 +1,6 @@
 package com.energiaclara.iam.application.service;
 
+
 import com.energiaclara.core.domain.shared.DomainException;
 import com.energiaclara.core.domain.shared.UserId;
 import com.energiaclara.iam.application.dto.LoginCommand;
