@@ -1,0 +1,15 @@
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\port\in\CreateMaintenanceTicketUseCase.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\port\in\DetectAnomalyUseCase.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\port\in\EvaluateChallengeUseCase.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\port\in\RegisterEnergyReadingUseCase.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\port\out\DomainEventPublisherPort.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\port\out\EnergyAnomalyRepositoryPort.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\port\out\EnergyBaselineProviderPort.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\port\out\EnergyChallengeRepositoryPort.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\port\out\EnergyReadingRepositoryPort.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\port\out\MaintenanceTicketRepositoryPort.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\service\EnergyOperationsApplicationService.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\usecase\CreateMaintenanceTicketCommand.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\usecase\DetectAnomalyCommand.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\usecase\EvaluateChallengeCommand.java
+C:\Users\Lenovo\IdeaProjects\Grupal_EnergiaClaraIA\EnergiaClara-IA-main\energiaclara-application\src\main\java\com\energiaclara\application\usecase\RegisterEnergyReadingCommand.java

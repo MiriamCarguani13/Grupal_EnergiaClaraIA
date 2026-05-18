@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Ejecutivo - EnergíaClara AI</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="demo-banner">📱 Mockup 1 de 8 - Dashboard Ejecutivo de KPIs (Web - Director / Admin)</div>
+
+  <div class="app-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="icon">⚡</span>
+        <span>EnergíaClara AI</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item active"><span class="icon">📊</span>Dashboard</a>
+        <a href="02-registro-lectura.html" class="nav-item"><span class="icon">⚡</span>Lecturas</a>
+        <a href="03-anomalia-ia.html" class="nav-item"><span class="icon">🔍</span>Anomalías</a>
+        <a href="04-crear-ticket.html" class="nav-item"><span class="icon">🔧</span>Tickets</a>
+        <a href="05-retos-ranking.html" class="nav-item"><span class="icon">🎯</span>Retos</a>
+        <a class="nav-item"><span class="icon">📈</span>Reportes</a>
+        <a class="nav-item"><span class="icon">⚙️</span>Configuración</a>
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">Dashboard Ejecutivo - Sede Central</div>
+        <div class="topbar-user">
+          <span style="font-size:0.75rem; color:var(--gray-500);"><span class="live-dot"></span>En vivo · <span data-live-clock>--:--</span></span>
+          <span class="user-email">director@demo.edu</span>
+          <span class="role-badge">Director</span>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <!-- KPIs animados -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">⚡ kWh Consumidos</div>
+            <div class="kpi-value"><span data-counter="12450">0</span></div>
+            <div class="kpi-sub">Este mes</div>
+            <div class="kpi-trend down">▼ 8.3% vs baseline</div>
+          </div>
+          <div class="kpi-card teal">
+            <div class="kpi-label">💰 Costo Evitado</div>
+            <div class="kpi-value">Bs. <span data-counter="3820">0</span></div>
+            <div class="kpi-sub">Este mes</div>
+            <div class="kpi-trend down">▲ 15.2% vs mes anterior</div>
+          </div>
+          <div class="kpi-card info">
+            <div class="kpi-label">🌿 CO₂ Evitado</div>
+            <div class="kpi-value"><span data-counter="2.1" data-suffix=" ton">0</span></div>
+            <div class="kpi-sub">Factor: 0.42 kg/kWh</div>
+            <div class="kpi-trend down">▼ Equivalente a 35 árboles</div>
+          </div>
+          <div class="kpi-card danger">
+            <div class="kpi-label"><span class="live-dot"></span>Anomalías Activas</div>
+            <div class="kpi-value"><span data-counter="3">0</span></div>
+            <div class="kpi-sub">1 crítica pendiente</div>
+            <div class="kpi-trend up">⚠ Requiere atención</div>
+          </div>
+        </div>
+
+        <!-- Gráfico + Anomalías -->
+        <div class="row-2">
+          <div class="card">
+            <div class="card-title">
+              Consumo Mensual vs Baseline (kWh)
+              <select style="font-size: 0.8rem; padding: 0.25rem 0.5rem; border: 1px solid var(--gray-300); border-radius: 4px;">
+                <option>Últimos 6 meses</option>
+                <option>Año actual</option>
+              </select>
+            </div>
+            <div class="chart-placeholder">
+              <div class="chart-bar" style="height: 85%" data-label="Ene" data-value="15,200 kWh"></div>
+              <div class="chart-bar" style="height: 78%" data-label="Feb" data-value="14,100 kWh"></div>
+              <div class="chart-bar" style="height: 72%" data-label="Mar" data-value="13,400 kWh"></div>
+              <div class="chart-bar" style="height: 68%" data-label="Abr" data-value="13,000 kWh"></div>
+              <div class="chart-bar" style="height: 62%" data-label="May" data-value="12,450 kWh"></div>
+              <div class="chart-bar" style="height: 55%" data-label="Jun" data-value="11,200 kWh"></div>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 1.5rem; text-align: center;">
+              Tendencia descendente: -28% acumulado desde enero · pasa el mouse sobre las barras
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Anomalías Activas <span class="live-dot"></span></div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <a href="03-anomalia-ia.html" style="text-decoration:none; color:inherit;">
+                <div class="alert alert-danger">
+                  <span class="icon">⚠</span>
+                  <div>
+                    <strong>Aula 3B - Consumo nocturno</strong>
+                    <div style="font-size: 0.75rem; margin-top: 0.25rem;">
+                      <span class="badge critica">Crítica</span> Score: 0.87
+                    </div>
+                  </div>
+                </div>
+              </a>
+              <div class="alert alert-warning">
+                <span class="icon">⚠</span>
+                <div>
+                  <strong>Lab. Informática - Pico</strong>
+                  <div style="font-size: 0.75rem; margin-top: 0.25rem;">
+                    <span class="badge alta">Alta</span> Score: 0.65
+                  </div>
+                </div>
+              </div>
+              <div class="alert" style="background: var(--yellow-light); border-left-color: var(--yellow); color: var(--yellow);">
+                <span class="icon">⚠</span>
+                <div>
+                  <strong>Oficina Admin - Desviación</strong>
+                  <div style="font-size: 0.75rem; margin-top: 0.25rem;">
+                    <span class="badge media">Media</span> Score: 0.42
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tickets + Reto -->
+        <div class="row-2">
+          <div class="card">
+            <div class="card-title">
+              Tickets Recientes
+              <a href="04-crear-ticket.html" class="btn btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">+ Nuevo</a>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Descripción</th>
+                  <th>Técnico</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>TK-042</strong></td>
+                  <td>Reemplazo luminaria Aula 3B</td>
+                  <td>Juan P.</td>
+                  <td><span class="badge process">En proceso</span></td>
+                </tr>
+                <tr>
+                  <td><strong>TK-041</strong></td>
+                  <td>Revisión A/C Lab. Informática</td>
+                  <td>María G.</td>
+                  <td><span class="badge info">Asignado</span></td>
+                </tr>
+                <tr>
+                  <td><strong>TK-040</strong></td>
+                  <td>Calibración medidor Bloque C</td>
+                  <td>Pedro R.</td>
+                  <td><span class="badge success">Cerrado</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🎯 Reto Activo</div>
+            <h3 style="font-size: 1rem; color: var(--green-dark); margin-bottom: 0.5rem;">
+              Mes de Ahorro Energético
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--gray-500); margin-bottom: 1rem;">
+              Meta: reducir 10% vs abril
+            </p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 72%"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.8rem;">
+              <span style="color: var(--gray-500);">Progreso</span>
+              <strong style="color: var(--green-dark);"><span data-counter="72" data-suffix="%">0</span></strong>
+            </div>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--gray-200); font-size: 0.85rem;">
+              <p style="margin-bottom: 0.5rem;">🏆 <strong>Líder:</strong> Aula 5A</p>
+              <p>👥 <strong>Participantes:</strong> <span data-counter="18">0</span> cursos</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="demo-nav">
+    <a href="index.html">📋 Índice</a>
+    <a href="01-dashboard-kpis.html">1</a>
+    <a href="02-registro-lectura.html">2</a>
+    <a href="03-anomalia-ia.html">3</a>
+    <a href="04-crear-ticket.html">4</a>
+    <a href="05-retos-ranking.html">5</a>
+    <a href="06-mobile-tickets.html">6</a>
+    <a href="07-mobile-cierre.html">7</a>
+    <a href="08-mobile-reto.html">8</a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

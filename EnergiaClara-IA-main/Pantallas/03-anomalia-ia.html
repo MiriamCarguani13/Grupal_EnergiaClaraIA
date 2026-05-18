@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle Anomalía + IA - EnergíaClara AI</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="demo-banner">📱 Mockup 3 de 8 - Detalle de Anomalía y Recomendación IA (Web - Director)</div>
+
+  <div class="app-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><span class="icon">⚡</span><span>EnergíaClara AI</span></div>
+      <nav class="sidebar-nav">
+        <a href="01-dashboard-kpis.html" class="nav-item"><span class="icon">📊</span>Dashboard</a>
+        <a href="02-registro-lectura.html" class="nav-item"><span class="icon">⚡</span>Lecturas</a>
+        <a class="nav-item active"><span class="icon">🔍</span>Anomalías</a>
+        <a href="04-crear-ticket.html" class="nav-item"><span class="icon">🔧</span>Tickets</a>
+        <a href="05-retos-ranking.html" class="nav-item"><span class="icon">🎯</span>Retos</a>
+        <a class="nav-item"><span class="icon">📈</span>Reportes</a>
+        <a class="nav-item"><span class="icon">⚙️</span>Configuración</a>
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">Anomalía ANO-018 - Detalle</div>
+        <div class="topbar-user">
+          <span style="font-size:0.75rem; color:var(--gray-500);"><span class="live-dot"></span><span data-live-clock>--:--</span></span>
+          <span class="user-email">director@demo.edu</span>
+          <span class="role-badge">Director</span>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div class="alert alert-danger" style="margin-bottom: 1.25rem; padding: 1.25rem; border-radius: var(--radius-lg);">
+          <span class="icon" style="font-size: 1.8rem;">🚨</span>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="badge critica">Crítica</span>
+              <strong style="font-size: 1.1rem;">Consumo Nocturno Atípico - Aula 3B</strong>
+            </div>
+            <p style="font-size: 0.85rem;">
+              Detectado: <strong>Lun 6 May 2026 - 02:14 hs</strong> | Medidor: MED-042 | Área: Bloque B
+            </p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+          <div class="card">
+            <div class="card-title">Score de Anomalía</div>
+            <div style="text-align: center; padding: 1rem 0;">
+              <div class="score-value"><span data-counter="0.87">0</span></div>
+              <p style="font-size: 0.8rem; color: var(--gray-500); margin-top: 0.25rem;">Score IA (0 - 1)</p>
+            </div>
+            <div class="score-bar">
+              <div class="score-fill" style="width: 87%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.7rem; color: var(--gray-500);">
+              <span>Normal</span>
+              <span>Crítico</span>
+            </div>
+            <div style="margin-top: 1rem; padding: 0.75rem; background: var(--purple-light); border-radius: var(--radius); display: flex; align-items: center; gap: 0.5rem;">
+              <span class="ai-tag">🤖 IA</span>
+              <span style="font-size: 0.75rem; color: var(--purple);">ai_used: true</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Datos de Consumo</div>
+            <table>
+              <tbody>
+                <tr>
+                  <td style="font-weight: 600; color: var(--gray-700);">Consumo detectado</td>
+                  <td><strong style="color: var(--red); font-size: 1.05rem;"><span data-counter="487">0</span> kWh</strong> <span style="color: var(--gray-500); font-size: 0.8rem;">(02:00 - 06:00 hs)</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--gray-700);">Baseline nocturno</td>
+                  <td><strong><span data-counter="38">0</span> kWh</strong> <span style="color: var(--gray-500); font-size: 0.8rem;">(promedio histórico)</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--gray-700);">Desviación</td>
+                  <td><strong style="color: var(--red);">+<span data-counter="1182" data-suffix="%">0</span></strong> vs baseline p95</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--gray-700);">Impacto estimado</td>
+                  <td><strong>Bs. <span data-counter="312">0</span></strong> de costo adicional</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--gray-700);">CO₂ adicional</td>
+                  <td><strong><span data-counter="0.20" data-suffix=" ton">0</span></strong> emitidas</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+          <div class="card" style="border-left: 4px solid var(--purple);">
+            <div class="card-title">
+              <span style="display: flex; align-items: center; gap: 0.5rem;">
+                <span class="ai-tag">🤖 Recomendación IA</span>
+              </span>
+            </div>
+
+            <p style="font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5;">
+              <strong>Causa probable:</strong> Equipos de refrigeración o iluminación dejados encendidos fuera de horario escolar. El patrón es consistente con una falla en el temporizador del Aula 3B.
+            </p>
+
+            <h4 style="font-size: 0.9rem; margin-bottom: 0.75rem; color: var(--purple);">Acciones recomendadas:</h4>
+            <ol style="padding-left: 1.5rem; font-size: 0.85rem; line-height: 1.8; color: var(--gray-700);">
+              <li><strong>Verificar temporizadores</strong> de iluminación y A/C del Aula 3B</li>
+              <li><strong>Revisar el cuadro eléctrico</strong> del Bloque B</li>
+              <li><strong>Programar mantenimiento preventivo</strong> del sistema de climatización</li>
+            </ol>
+
+            <div class="alert alert-success" style="margin-top: 1rem;">
+              <span class="icon">🌿</span>
+              <div>
+                <strong>Impacto estimado al resolver:</strong>
+                <p style="font-size: 0.8rem; margin-top: 0.25rem;">
+                  <span data-counter="420">0</span> kWh evitables · Bs. <span data-counter="270">0</span> ahorrados · <span data-counter="0.18" data-suffix=" ton">0</span> CO₂ evitado
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Acciones</div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <a href="04-crear-ticket.html" class="btn btn-primary btn-block">
+                🔧 Convertir en Ticket
+              </a>
+              <button class="btn btn-secondary btn-block">
+                📋 Ver historial completo
+              </button>
+              <button class="btn btn-secondary btn-block">
+                📤 Exportar reporte
+              </button>
+              <button class="btn btn-secondary btn-block" style="color: var(--red); border-color: #fecaca;">
+                ✕ Ignorar anomalía
+              </button>
+            </div>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+              <p style="font-size: 0.75rem; color: var(--gray-500); margin-bottom: 0.25rem;">Estado actual</p>
+              <span class="badge process">NOTIFICADA</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Línea de tiempo del estado</div>
+          <div class="timeline">
+            <div class="timeline-step done">
+              <div class="timeline-dot"></div>
+              <div class="timeline-label">DETECTADA</div>
+              <div class="timeline-date">06 May 02:14</div>
+            </div>
+            <div class="timeline-step active">
+              <div class="timeline-dot"></div>
+              <div class="timeline-label">NOTIFICADA</div>
+              <div class="timeline-date">06 May 02:15</div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-dot"></div>
+              <div class="timeline-label">EN ACCIÓN</div>
+              <div class="timeline-date">Pendiente</div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-dot"></div>
+              <div class="timeline-label">RESUELTA</div>
+              <div class="timeline-date">Pendiente</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="demo-nav">
+    <a href="index.html">📋 Índice</a>
+    <a href="01-dashboard-kpis.html">1</a>
+    <a href="02-registro-lectura.html">2</a>
+    <a href="03-anomalia-ia.html">3</a>
+    <a href="04-crear-ticket.html">4</a>
+    <a href="05-retos-ranking.html">5</a>
+    <a href="06-mobile-tickets.html">6</a>
+    <a href="07-mobile-cierre.html">7</a>
+    <a href="08-mobile-reto.html">8</a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

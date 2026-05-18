@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Ticket - EnergíaClara AI</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .priority-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+    .priority-btn {
+      padding: 0.6rem;
+      border: 1.5px solid var(--gray-300);
+      border-radius: var(--radius);
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: var(--white);
+      transition: all 0.2s var(--tr);
+    }
+    .priority-btn:hover { border-color: var(--gray-400); transform: translateY(-2px); }
+    .priority-btn.selected.critica { background: var(--red); color: var(--white); border-color: var(--red); box-shadow: 0 4px 12px rgba(220,38,38,0.3); }
+    .priority-btn.selected.alta    { background: var(--orange); color: var(--white); border-color: var(--orange); box-shadow: 0 4px 12px rgba(234,88,12,0.3); }
+    .priority-btn.selected.media   { background: var(--yellow); color: var(--white); border-color: var(--yellow); box-shadow: 0 4px 12px rgba(202,138,4,0.3); }
+    .priority-btn.selected.baja    { background: var(--teal); color: var(--white); border-color: var(--teal); box-shadow: 0 4px 12px rgba(13,148,136,0.3); }
+    .technician-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    .technician-card {
+      border: 1.5px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 0.875rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s var(--tr);
+    }
+    .technician-card:not(.busy):hover { border-color: var(--green); transform: translateY(-2px); }
+    .technician-card.selected {
+      border-color: var(--green);
+      background: var(--green-light);
+      box-shadow: 0 4px 12px rgba(22,163,74,0.2);
+    }
+    .technician-card.busy { opacity: 0.5; cursor: not-allowed; }
+    .technician-avatar {
+      width: 2.5rem; height: 2.5rem;
+      background: var(--gray-300);
+      border-radius: 50%;
+      margin: 0 auto 0.5rem;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--white); font-weight: 700;
+      transition: all 0.2s var(--tr);
+    }
+    .technician-card.selected .technician-avatar {
+      background: var(--green);
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-banner">📱 Mockup 4 de 8 - Crear Ticket de Mantenimiento (Web - Director / Técnico)</div>
+
+  <div class="app-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><span class="icon">⚡</span><span>EnergíaClara AI</span></div>
+      <nav class="sidebar-nav">
+        <a href="01-dashboard-kpis.html" class="nav-item"><span class="icon">📊</span>Dashboard</a>
+        <a href="02-registro-lectura.html" class="nav-item"><span class="icon">⚡</span>Lecturas</a>
+        <a href="03-anomalia-ia.html" class="nav-item"><span class="icon">🔍</span>Anomalías</a>
+        <a class="nav-item active"><span class="icon">🔧</span>Tickets</a>
+        <a href="05-retos-ranking.html" class="nav-item"><span class="icon">🎯</span>Retos</a>
+        <a class="nav-item"><span class="icon">📈</span>Reportes</a>
+        <a class="nav-item"><span class="icon">⚙️</span>Configuración</a>
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">Crear Ticket de Mantenimiento</div>
+        <div class="topbar-user">
+          <span style="font-size:0.75rem; color:var(--gray-500);"><span class="live-dot"></span><span data-live-clock>--:--</span></span>
+          <span class="user-email">director@demo.edu</span>
+          <span class="role-badge">Director</span>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; max-width: 1100px;">
+          <div class="card">
+            <div class="card-title">Nuevo Ticket - Desde Anomalía ANO-018</div>
+
+            <div class="alert alert-success" style="margin-bottom: 1.25rem;">
+              <span class="icon">✓</span>
+              <div>
+                <strong>Pre-cargado desde anomalía</strong>
+                <p style="font-size: 0.8rem; margin-top: 0.25rem;">ANO-018 - Aula 3B - Consumo nocturno atípico</p>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Área afectada <span style="color: var(--red);">*</span></label>
+                <select>
+                  <option>Bloque B › Aula 3B</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Equipo <span style="color: var(--red);">*</span></label>
+                <select>
+                  <option>Sistema A/C + Iluminación</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Descripción <span style="color: var(--red);">*</span></label>
+              <textarea rows="3" style="resize: vertical;">Consumo nocturno atípico detectado (487 kWh). Verificar temporizadores de iluminación y A/C del Aula 3B. Revisar cuadro eléctrico del Bloque B.</textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Categoría</label>
+                <select>
+                  <option>Mantenimiento Correctivo</option>
+                  <option>Mantenimiento Preventivo</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Tipo de intervención</label>
+                <select>
+                  <option>Verificación + Reparación</option>
+                  <option>Solo inspección</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Prioridad <span style="color: var(--red);">*</span> <span style="font-size:0.7rem; color:var(--gray-500); font-weight:400;">(haz clic para cambiar)</span></label>
+              <div class="priority-options">
+                <div class="priority-btn" data-level="baja">BAJA</div>
+                <div class="priority-btn" data-level="media">MEDIA</div>
+                <div class="priority-btn" data-level="alta">ALTA</div>
+                <div class="priority-btn selected critica" data-level="critica">CRÍTICA</div>
+              </div>
+            </div>
+
+            <div class="alert alert-danger" style="margin-bottom: 1.25rem;">
+              <span class="icon">⏱</span>
+              <div>
+                <strong>SLA Calculado: 4 horas (prioridad CRÍTICA)</strong>
+                <p style="font-size: 0.8rem; margin-top: 0.25rem;">
+                  Vence: 06 May 2026 - 06:14 hs. El técnico asignado será notificado inmediatamente.
+                </p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Asignar Técnico <span style="color: var(--red);">*</span> <span style="font-size:0.7rem; color:var(--gray-500); font-weight:400;">(selecciona uno)</span></label>
+              <div class="technician-grid">
+                <div class="technician-card selected">
+                  <div class="technician-avatar">JP</div>
+                  <strong style="font-size: 0.85rem;">Juan Pérez</strong>
+                  <p style="font-size: 0.7rem; color: var(--green-dark); margin-top: 0.25rem;"><span class="live-dot"></span>Disponible</p>
+                </div>
+                <div class="technician-card busy">
+                  <div class="technician-avatar">MG</div>
+                  <strong style="font-size: 0.85rem;">María García</strong>
+                  <p style="font-size: 0.7rem; color: var(--gray-500); margin-top: 0.25rem;">En TK-041</p>
+                </div>
+                <div class="technician-card">
+                  <div class="technician-avatar">PR</div>
+                  <strong style="font-size: 0.85rem;">Pedro Rojas</strong>
+                  <p style="font-size: 0.7rem; color: var(--green-dark); margin-top: 0.25rem;"><span class="live-dot"></span>Disponible</p>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
+              <button class="btn btn-secondary">Cancelar</button>
+              <button class="btn btn-primary" data-submit-action="create" data-success-message="✓ Ticket TK-043 creado y asignado a Juan Pérez">
+                ✓ Crear y Asignar Ticket
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="background: var(--green-50); border: 1px solid var(--green);">
+              <div class="card-title">📌 Anomalía Origen</div>
+              <table style="font-size: 0.85rem;">
+                <tbody>
+                  <tr><td style="font-weight: 600;">ID:</td><td>ANO-018</td></tr>
+                  <tr><td style="font-weight: 600;">Score:</td><td><strong style="color: var(--red);">0.87</strong> (Crítica)</td></tr>
+                  <tr><td style="font-weight: 600;">Área:</td><td>Aula 3B</td></tr>
+                  <tr><td style="font-weight: 600;">Detección:</td><td>06 May 02:14</td></tr>
+                  <tr><td style="font-weight: 600;">kWh extra:</td><td><strong><span data-counter="449">0</span> kWh</strong></td></tr>
+                  <tr><td style="font-weight: 600;">Costo extra:</td><td><strong>Bs. <span data-counter="312">0</span></strong></td></tr>
+                </tbody>
+              </table>
+              <a href="03-anomalia-ia.html" style="display: block; text-align: center; margin-top: 1rem; font-size: 0.8rem; color: var(--green-dark); text-decoration: none; font-weight: 600;">
+                Ver detalle completo →
+              </a>
+            </div>
+
+            <div class="card" style="margin-top: 1rem;">
+              <div class="card-title">📊 SLA por Prioridad</div>
+              <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+                <div style="display: flex; justify-content: space-between;">
+                  <span><span class="badge baja">Baja</span></span>
+                  <span>72 hs</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span><span class="badge media">Media</span></span>
+                  <span>24 hs</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span><span class="badge alta">Alta</span></span>
+                  <span>8 hs</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span><span class="badge critica">Crítica</span></span>
+                  <span><strong style="color: var(--red);">4 hs</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="demo-nav">
+    <a href="index.html">📋 Índice</a>
+    <a href="01-dashboard-kpis.html">1</a>
+    <a href="02-registro-lectura.html">2</a>
+    <a href="03-anomalia-ia.html">3</a>
+    <a href="04-crear-ticket.html">4</a>
+    <a href="05-retos-ranking.html">5</a>
+    <a href="06-mobile-tickets.html">6</a>
+    <a href="07-mobile-cierre.html">7</a>
+    <a href="08-mobile-reto.html">8</a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

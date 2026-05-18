@@ -1,0 +1,15 @@
+com\energiaclara\application\port\in\CreateMaintenanceTicketUseCase.class
+com\energiaclara\application\usecase\CreateMaintenanceTicketCommand.class
+com\energiaclara\application\port\out\MaintenanceTicketRepositoryPort.class
+com\energiaclara\application\port\out\EnergyBaselineProviderPort.class
+com\energiaclara\application\service\EnergyOperationsApplicationService.class
+com\energiaclara\application\port\out\EnergyAnomalyRepositoryPort.class
+com\energiaclara\application\usecase\DetectAnomalyCommand.class
+com\energiaclara\application\port\out\DomainEventPublisherPort.class
+com\energiaclara\application\port\out\EnergyReadingRepositoryPort.class
+com\energiaclara\application\port\in\DetectAnomalyUseCase.class
+com\energiaclara\application\usecase\RegisterEnergyReadingCommand.class
+com\energiaclara\application\port\out\EnergyChallengeRepositoryPort.class
+com\energiaclara\application\port\in\RegisterEnergyReadingUseCase.class
+com\energiaclara\application\port\in\EvaluateChallengeUseCase.class
+com\energiaclara\application\usecase\EvaluateChallengeCommand.class

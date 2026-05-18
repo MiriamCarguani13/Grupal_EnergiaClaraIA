@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retos y Ranking - EnergíaClara AI</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .reto-active-banner {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--teal) 100%);
+      color: var(--white);
+      padding: 1.75rem;
+      border-radius: var(--radius-lg);
+      margin-bottom: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .reto-active-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -10%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+      animation: spin 25s linear infinite;
+    }
+    .reto-active-banner > * { position: relative; z-index: 1; }
+    .reto-active-banner h2 { font-size: 1.25rem; margin-bottom: 0.25rem; }
+    .reto-active-banner .progress-bar { background: rgba(255,255,255,0.3); margin: 1rem 0 0.5rem; }
+    .reto-active-banner .progress-fill { background: var(--white); }
+    .reto-stats { display: flex; gap: 1.5rem; margin-top: 1rem; font-size: 0.85rem; flex-wrap: wrap; }
+    .reto-stats > div { display: flex; align-items: center; gap: 0.4rem; }
+    .ranking-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 120px 150px 80px;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      align-items: center;
+      transition: all 0.2s var(--tr);
+      animation: slideInRight 0.4s var(--tr) both;
+    }
+    .ranking-row:nth-of-type(1) { animation-delay: 0.05s; }
+    .ranking-row:nth-of-type(2) { animation-delay: 0.10s; }
+    .ranking-row:nth-of-type(3) { animation-delay: 0.15s; }
+    .ranking-row:nth-of-type(4) { animation-delay: 0.20s; }
+    .ranking-row:nth-of-type(5) { animation-delay: 0.25s; }
+    .ranking-row:nth-of-type(6) { animation-delay: 0.30s; }
+    .ranking-row:nth-of-type(7) { animation-delay: 0.35s; }
+    .ranking-row:hover { background: var(--gray-50); transform: translateX(4px); }
+    .ranking-row.first {
+      background: linear-gradient(90deg, #fef3c7 0%, transparent 100%);
+      animation: slideInRight 0.4s var(--tr) 0.10s both, pulseGlow 2.5s ease-in-out infinite;
+    }
+    .pos-badge {
+      width: 2.2rem; height: 2.2rem;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: transform 0.2s var(--tr);
+    }
+    .ranking-row:hover .pos-badge { transform: scale(1.15) rotate(-5deg); }
+    .pos-badge.gold   { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: var(--white); }
+    .pos-badge.silver { background: linear-gradient(135deg, #cbd5e1, #94a3b8); color: var(--white); }
+    .pos-badge.bronze { background: linear-gradient(135deg, #f59e0b, #d97706); color: var(--white); }
+    .pos-badge.normal { background: var(--gray-200); color: var(--gray-700); }
+    .progress-mini { height: 0.5rem; background: var(--gray-200); border-radius: 9999px; overflow: hidden; }
+    .progress-mini-fill { height: 100%; background: var(--green); animation: growBar 1.2s var(--tr); }
+  </style>
+</head>
+<body>
+  <div class="demo-banner">📱 Mockup 5 de 8 - Gestión de Retos y Ranking (Web - Director / Docente)</div>
+
+  <div class="app-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><span class="icon">⚡</span><span>EnergíaClara AI</span></div>
+      <nav class="sidebar-nav">
+        <a href="01-dashboard-kpis.html" class="nav-item"><span class="icon">📊</span>Dashboard</a>
+        <a href="02-registro-lectura.html" class="nav-item"><span class="icon">⚡</span>Lecturas</a>
+        <a href="03-anomalia-ia.html" class="nav-item"><span class="icon">🔍</span>Anomalías</a>
+        <a href="04-crear-ticket.html" class="nav-item"><span class="icon">🔧</span>Tickets</a>
+        <a class="nav-item active"><span class="icon">🎯</span>Retos</a>
+        <a class="nav-item"><span class="icon">📈</span>Reportes</a>
+        <a class="nav-item"><span class="icon">⚙️</span>Configuración</a>
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">Retos Educativos y Ranking</div>
+        <div class="topbar-user">
+          <span style="font-size:0.75rem; color:var(--gray-500);"><span class="live-dot"></span><span data-live-clock>--:--</span></span>
+          <span class="user-email">docente@demo.edu</span>
+          <span class="role-badge">Docente</span>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+          <div class="reto-active-banner">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+              <span style="background: rgba(255,255,255,0.2); padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700;"><span class="live-dot" style="background:white;"></span>ACTIVO</span>
+              <span style="font-size: 0.75rem; opacity: 0.9;">Mayo 2026</span>
+            </div>
+            <h2>"Mes de Ahorro Energético - Mayo 2026"</h2>
+            <p style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.25rem;">
+              Meta: reducir 10% de consumo vs abril · Periodo: 1-31 Mayo 2026
+            </p>
+            <p style="font-size: 0.85rem; opacity: 0.85;">
+              Alcance: 18 cursos · Sede Central
+            </p>
+
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 72%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span style="font-size: 0.85rem; opacity: 0.9;">Progreso</span>
+              <strong style="font-size: 1.1rem;"><span data-counter="72" data-suffix="%">0</span></strong>
+            </div>
+
+            <div class="reto-stats">
+              <div>⚡ <strong><span data-counter="843">0</span> kWh</strong> ahorrados</div>
+              <div>💰 <strong>Bs. <span data-counter="540">0</span></strong> evitados</div>
+              <div>🌿 <strong><span data-counter="0.35" data-suffix=" ton">0</span></strong> CO₂ evitado</div>
+            </div>
+          </div>
+
+          <div class="card" style="display: flex; flex-direction: column; justify-content: center; text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem; animation: pulse 2s ease-in-out infinite;">+</div>
+            <h3 style="font-size: 1rem; color: var(--green-dark); margin-bottom: 0.5rem;">Nuevo Reto</h3>
+            <p style="font-size: 0.85rem; color: var(--gray-500); margin-bottom: 1rem;">
+              Crear campaña de ahorro para tu curso
+            </p>
+            <button class="btn btn-primary btn-block">+ Publicar Reto</button>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem;">
+          <div class="card">
+            <div class="card-title">
+              🏆 Ranking - Mes Actual
+              <select style="font-size: 0.8rem; padding: 0.25rem 0.5rem; border: 1px solid var(--gray-300); border-radius: 4px;">
+                <option>Por kWh ahorrados</option>
+                <option>Por porcentaje</option>
+                <option>Por puntos</option>
+              </select>
+            </div>
+
+            <div class="ranking-row" style="font-weight: 700; font-size: 0.7rem; color: var(--gray-500); text-transform: uppercase; border-bottom: 2px solid var(--gray-200); animation: none;">
+              <span>Pos.</span>
+              <span>Curso</span>
+              <span style="text-align: right;">kWh ahorr.</span>
+              <span>Progreso</span>
+              <span style="text-align: right;">Puntos</span>
+            </div>
+
+            <div class="ranking-row first">
+              <div class="pos-badge gold">🥇</div>
+              <div><strong>Aula 5A</strong><br><span style="font-size: 0.75rem; color: var(--gray-500);">Prof. Ana Flores</span></div>
+              <strong style="text-align: right; color: var(--green-dark);"><span data-counter="124">0</span> kWh</strong>
+              <div>
+                <div class="progress-mini"><div class="progress-mini-fill" style="width: 92%;"></div></div>
+                <span style="font-size: 0.75rem; color: var(--green-dark); font-weight: 600;">92%</span>
+              </div>
+              <strong style="text-align: right; color: var(--green-dark);"><span data-counter="1840">0</span></strong>
+            </div>
+
+            <div class="ranking-row">
+              <div class="pos-badge silver">🥈</div>
+              <div><strong>Aula 3B</strong><br><span style="font-size: 0.75rem; color: var(--gray-500);">Prof. Carlos M.</span></div>
+              <strong style="text-align: right;"><span data-counter="118">0</span> kWh</strong>
+              <div>
+                <div class="progress-mini"><div class="progress-mini-fill" style="width: 88%;"></div></div>
+                <span style="font-size: 0.75rem; color: var(--gray-700); font-weight: 600;">88%</span>
+              </div>
+              <strong style="text-align: right;"><span data-counter="1750">0</span></strong>
+            </div>
+
+            <div class="ranking-row">
+              <div class="pos-badge bronze">🥉</div>
+              <div><strong>Aula 2C</strong><br><span style="font-size: 0.75rem; color: var(--gray-500);">Prof. Laura S.</span></div>
+              <strong style="text-align: right;"><span data-counter="105">0</span> kWh</strong>
+              <div>
+                <div class="progress-mini"><div class="progress-mini-fill" style="width: 78%;"></div></div>
+                <span style="font-size: 0.75rem; color: var(--gray-700); font-weight: 600;">78%</span>
+              </div>
+              <strong style="text-align: right;"><span data-counter="1560">0</span></strong>
+            </div>
+
+            <div class="ranking-row">
+              <div class="pos-badge normal">4</div>
+              <div><strong>Lab. Cómputo</strong><br><span style="font-size: 0.75rem; color: var(--gray-500);">Prof. Pedro R.</span></div>
+              <strong style="text-align: right;"><span data-counter="98">0</span> kWh</strong>
+              <div>
+                <div class="progress-mini"><div class="progress-mini-fill" style="width: 73%;"></div></div>
+                <span style="font-size: 0.75rem; color: var(--gray-700); font-weight: 600;">73%</span>
+              </div>
+              <strong style="text-align: right;"><span data-counter="1460">0</span></strong>
+            </div>
+
+            <div class="ranking-row">
+              <div class="pos-badge normal">5</div>
+              <div><strong>Aula 1A</strong><br><span style="font-size: 0.75rem; color: var(--gray-500);">Prof. Ana G.</span></div>
+              <strong style="text-align: right;"><span data-counter="89">0</span> kWh</strong>
+              <div>
+                <div class="progress-mini"><div class="progress-mini-fill" style="width: 66%;"></div></div>
+                <span style="font-size: 0.75rem; color: var(--gray-700); font-weight: 600;">66%</span>
+              </div>
+              <strong style="text-align: right;"><span data-counter="1320">0</span></strong>
+            </div>
+
+            <div class="ranking-row">
+              <div class="pos-badge normal">6</div>
+              <div><strong>Aula 4B</strong><br><span style="font-size: 0.75rem; color: var(--gray-500);">Prof. Luis V.</span></div>
+              <strong style="text-align: right;"><span data-counter="76">0</span> kWh</strong>
+              <div>
+                <div class="progress-mini"><div class="progress-mini-fill" style="width: 57%;"></div></div>
+                <span style="font-size: 0.75rem; color: var(--gray-700); font-weight: 600;">57%</span>
+              </div>
+              <strong style="text-align: right;"><span data-counter="1130">0</span></strong>
+            </div>
+
+            <div style="text-align: center; padding: 1rem; color: var(--gray-500); font-size: 0.85rem;">
+              <a href="#" style="color: var(--green-dark); text-decoration: none; font-weight: 600;">
+                Ver ranking completo (18 cursos) →
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="background: var(--purple-light); border-left: 4px solid var(--purple);">
+              <div class="card-title" style="color: var(--purple);">
+                <span class="ai-tag">🤖 Sugerencia IA</span>
+              </div>
+
+              <h4 style="font-size: 0.95rem; color: var(--purple); margin-bottom: 0.75rem;">
+                Estrategia para Aula 3B
+              </h4>
+
+              <p style="font-size: 0.85rem; line-height: 1.5; color: var(--gray-700); margin-bottom: 1rem;">
+                El <strong>Aula 3B</strong> puede subir al primer lugar reduciendo el consumo en horario de recreo (11:00 - 11:30 hs).
+              </p>
+
+              <div style="background: var(--white); padding: 0.75rem; border-radius: var(--radius); margin-bottom: 1rem;">
+                <p style="font-size: 0.8rem; font-weight: 600; color: var(--purple); margin-bottom: 0.25rem;">
+                  Acción sugerida
+                </p>
+                <p style="font-size: 0.85rem; color: var(--gray-700);">
+                  Apagar luminarias durante el recreo. Impacto estimado: <strong>+8 kWh</strong> de ahorro semanal.
+                </p>
+              </div>
+
+              <button class="btn btn-primary btn-block" style="font-size: 0.8rem;">
+                Aplicar sugerencia
+              </button>
+            </div>
+
+            <div class="card" style="margin-top: 1rem;">
+              <div class="card-title">📅 Retos anteriores</div>
+              <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--gray-50); border-radius: 4px;">
+                  <span>Abril 2026</span>
+                  <span class="badge success">Cumplido</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--gray-50); border-radius: 4px;">
+                  <span>Marzo 2026</span>
+                  <span class="badge success">Cumplido</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--gray-50); border-radius: 4px;">
+                  <span>Febrero 2026</span>
+                  <span class="badge" style="background: #fee2e2; color: var(--red);">No cumplido</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="demo-nav">
+    <a href="index.html">📋 Índice</a>
+    <a href="01-dashboard-kpis.html">1</a>
+    <a href="02-registro-lectura.html">2</a>
+    <a href="03-anomalia-ia.html">3</a>
+    <a href="04-crear-ticket.html">4</a>
+    <a href="05-retos-ranking.html">5</a>
+    <a href="06-mobile-tickets.html">6</a>
+    <a href="07-mobile-cierre.html">7</a>
+    <a href="08-mobile-reto.html">8</a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

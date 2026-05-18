@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Móvil - Bandeja Tickets - EnergíaClara AI</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="demo-banner">📱 Mockup 6 de 8 - App Móvil: Bandeja de Tickets (Técnico)</div>
+
+  <div class="mobile-wrapper">
+    <div class="mobile-frame">
+      <div class="mobile-statusbar">
+        <span data-live-clock>9:41</span>
+        <span>⚡ 100%</span>
+      </div>
+
+      <div class="mobile-header">
+        <button class="icon-btn">←</button>
+        <h2>Mis Tickets</h2>
+        <button class="icon-btn" style="position:relative;">⋮<span class="live-dot" style="position:absolute; top:6px; right:6px;"></span></button>
+      </div>
+
+      <div style="background: var(--green-light); padding: 0.75rem 1.25rem; text-align: center;">
+        <strong style="color: var(--green-dark); font-size: 0.9rem;">Juan Pérez</strong>
+        <span style="color: var(--gray-700); font-size: 0.85rem;"> · <span data-counter="3">0</span> tickets asignados</span>
+      </div>
+
+      <div class="filter-group" style="padding: 0.75rem 1.25rem; display: flex; gap: 0.5rem; overflow-x: auto;">
+        <button style="background: var(--green); color: var(--white); border: none; padding: 0.4rem 0.875rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; cursor:pointer; transition: all 0.2s var(--tr);">
+          Todos (3)
+        </button>
+        <button style="background: var(--white); color: var(--gray-700); border: 1px solid var(--gray-300); padding: 0.4rem 0.875rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; cursor:pointer; transition: all 0.2s var(--tr);">
+          Críticos (1)
+        </button>
+        <button style="background: var(--white); color: var(--gray-700); border: 1px solid var(--gray-300); padding: 0.4rem 0.875rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; cursor:pointer; transition: all 0.2s var(--tr);">
+          En proceso (1)
+        </button>
+        <button style="background: var(--white); color: var(--gray-700); border: 1px solid var(--gray-300); padding: 0.4rem 0.875rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; cursor:pointer; transition: all 0.2s var(--tr);">
+          SLA vence
+        </button>
+      </div>
+
+      <div class="mobile-content">
+        <a href="07-mobile-cierre.html" style="text-decoration: none; color: inherit;">
+          <div class="ticket-mobile-card critica">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <span class="badge critica">Crítica</span>
+              <span style="font-size: 0.75rem; color: var(--gray-500); font-weight: 700;">TK-042</span>
+            </div>
+            <h4>Aula 3B - Bloque B</h4>
+            <p class="meta">Sistema A/C + Iluminación</p>
+            <p style="font-size: 0.8rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+              Consumo nocturno atípico (487 kWh). Verificar temporizadores.
+            </p>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; border-top: 1px solid var(--gray-200);">
+              <span class="sla"><span class="live-dot"></span>Vence en 2h 15min</span>
+              <span class="badge process">EN PROCESO</span>
+            </div>
+          </div>
+        </a>
+
+        <div class="ticket-mobile-card alta">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+            <span class="badge alta">Alta</span>
+            <span style="font-size: 0.75rem; color: var(--gray-500); font-weight: 700;">TK-039</span>
+          </div>
+          <h4>Lab. Informática</h4>
+          <p class="meta">Sistema de aire acondicionado</p>
+          <p style="font-size: 0.8rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+            Revisión pico de consumo mediodía recurrente.
+          </p>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; border-top: 1px solid var(--gray-200);">
+            <span style="font-size: 0.75rem; color: var(--orange); font-weight: 600;">⏱ Vence en 5h 30min</span>
+            <span class="badge info">ASIGNADO</span>
+          </div>
+        </div>
+
+        <div class="ticket-mobile-card media">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+            <span class="badge media">Media</span>
+            <span style="font-size: 0.75rem; color: var(--gray-500); font-weight: 700;">TK-037</span>
+          </div>
+          <h4>Oficina Admisiones</h4>
+          <p class="meta">Medidor eléctrico</p>
+          <p style="font-size: 0.8rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+            Calibración medidor - desviación 8% sospechosa.
+          </p>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; border-top: 1px solid var(--gray-200);">
+            <span style="font-size: 0.75rem; color: var(--gray-500); font-weight: 600;">⏱ Vence en 2 días</span>
+            <span class="badge info">ASIGNADO</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 1rem; text-align: center;">
+          <button class="btn btn-secondary" style="width: 100%;">
+            📋 Ver historial completo
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-bottombar">
+        <div class="bottombar-item">
+          <span class="icon">🏠</span>
+          <span>Inicio</span>
+        </div>
+        <div class="bottombar-item active">
+          <span class="icon">📋</span>
+          <span>Tickets</span>
+        </div>
+        <div class="bottombar-item">
+          <span class="icon">📷</span>
+          <span>Evidencia</span>
+        </div>
+        <div class="bottombar-item">
+          <span class="icon">👤</span>
+          <span>Perfil</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-nav">
+    <a href="index.html">📋 Índice</a>
+    <a href="01-dashboard-kpis.html">1</a>
+    <a href="02-registro-lectura.html">2</a>
+    <a href="03-anomalia-ia.html">3</a>
+    <a href="04-crear-ticket.html">4</a>
+    <a href="05-retos-ranking.html">5</a>
+    <a href="06-mobile-tickets.html">6</a>
+    <a href="07-mobile-cierre.html">7</a>
+    <a href="08-mobile-reto.html">8</a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Lectura - EnergíaClara AI</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="demo-banner">📱 Mockup 2 de 8 - Registro de Lectura Energética (Web - Docente / Técnico)</div>
+
+  <div class="app-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><span class="icon">⚡</span><span>EnergíaClara AI</span></div>
+      <nav class="sidebar-nav">
+        <a href="01-dashboard-kpis.html" class="nav-item"><span class="icon">📊</span>Dashboard</a>
+        <a class="nav-item active"><span class="icon">⚡</span>Lecturas</a>
+        <a href="03-anomalia-ia.html" class="nav-item"><span class="icon">🔍</span>Anomalías</a>
+        <a href="04-crear-ticket.html" class="nav-item"><span class="icon">🔧</span>Tickets</a>
+        <a href="05-retos-ranking.html" class="nav-item"><span class="icon">🎯</span>Retos</a>
+        <a class="nav-item"><span class="icon">📈</span>Reportes</a>
+        <a class="nav-item"><span class="icon">⚙️</span>Configuración</a>
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">Registrar Lectura Energética</div>
+        <div class="topbar-user">
+          <span style="font-size:0.75rem; color:var(--gray-500);"><span class="live-dot"></span><span data-live-clock>--:--</span></span>
+          <span class="user-email">docente@demo.edu</span>
+          <span class="role-badge">Docente</span>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; max-width: 1100px;">
+          <div class="card">
+            <div class="card-title">Nueva Lectura</div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Medidor <span style="color: var(--red);">*</span></label>
+                <select>
+                  <option>MED-042 - Aula 3B (Bloque Principal)</option>
+                  <option>MED-043 - Aula 4A (Bloque Principal)</option>
+                  <option>MED-051 - Lab. Informática</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Periodo <span style="color: var(--red);">*</span></label>
+                <input type="text" value="Mayo 2026 - Semana 2" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Sede / Área</label>
+                <input type="text" value="Sede Central › Bloque B › Aula 3B" readonly style="background: var(--gray-100);" />
+              </div>
+              <div class="form-group">
+                <label>Fuente</label>
+                <select>
+                  <option>Manual (Docente)</option>
+                  <option>Importación CSV</option>
+                  <option>IoT</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Valor de Consumo <span style="color: var(--red);">*</span></label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="number" value="1248" style="flex: 2; font-size: 1.5rem; font-weight: 700; color: var(--green-dark); text-align: center;" />
+                <select style="flex: 1;">
+                  <option>kWh</option>
+                  <option>MWh</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="alert alert-warning" style="margin-bottom: 1rem;">
+              <span class="icon">⚠</span>
+              <div>
+                <strong>Valor 12% superior al promedio histórico</strong>
+                <p style="font-size: 0.8rem; margin-top: 0.25rem;">Promedio últimas 4 semanas: 1,114 kWh. La lectura se revisará automáticamente.</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Evidencia Fotográfica (opcional)</label>
+              <div style="border: 2px dashed var(--gray-300); border-radius: var(--radius); padding: 2rem; text-align: center; color: var(--gray-500); background: var(--gray-50); cursor: pointer; transition: all 0.2s var(--tr);"
+                   onmouseover="this.style.borderColor='var(--green)'; this.style.background='var(--green-50)';"
+                   onmouseout="this.style.borderColor='var(--gray-300)'; this.style.background='var(--gray-50)';">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div>
+                <p style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem;">Arrastrar foto o clic para subir</p>
+                <p style="font-size: 0.75rem;">JPG / PNG - máx. 5MB</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Observaciones</label>
+              <textarea rows="3" placeholder="Notas adicionales sobre la lectura..." style="resize: vertical;"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+              <button class="btn btn-secondary">Cancelar</button>
+              <button class="btn btn-primary" data-submit-action="register" data-success-message="✓ Lectura registrada y enviada para validación">
+                ✓ Registrar Lectura
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom: 1rem;">
+              <div class="card-title">Historial del Medidor</div>
+              <p style="font-size: 0.8rem; color: var(--gray-500); margin-bottom: 1rem;">
+                Últimas 4 lecturas validadas
+              </p>
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid var(--gray-200);">
+                  <div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">Semana 1 May</div>
+                    <div style="font-weight: 600; color: var(--green-dark); font-size: 1.05rem;">1,195 kWh</div>
+                  </div>
+                  <span class="badge success">Válida</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid var(--gray-200);">
+                  <div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">Abril Semana 4</div>
+                    <div style="font-weight: 600; color: var(--green-dark); font-size: 1.05rem;">1,142 kWh</div>
+                  </div>
+                  <span class="badge success">Válida</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid var(--gray-200);">
+                  <div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">Abril Semana 3</div>
+                    <div style="font-weight: 600; color: var(--green-dark); font-size: 1.05rem;">1,098 kWh</div>
+                  </div>
+                  <span class="badge success">Válida</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">Abril Semana 2</div>
+                    <div style="font-weight: 600; color: var(--green-dark); font-size: 1.05rem;">1,134 kWh</div>
+                  </div>
+                  <span class="badge success">Válida</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Resumen</div>
+              <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--gray-200);">
+                <span style="font-size: 0.85rem; color: var(--gray-700);">Promedio</span>
+                <strong><span data-counter="1142">0</span> kWh</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--gray-200);">
+                <span style="font-size: 0.85rem; color: var(--gray-700);">Mínimo</span>
+                <strong><span data-counter="1098">0</span> kWh</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                <span style="font-size: 0.85rem; color: var(--gray-700);">Máximo</span>
+                <strong><span data-counter="1195">0</span> kWh</strong>
+              </div>
+              <div style="margin-top: 1rem; padding: 0.75rem; background: var(--green-light); border-radius: var(--radius); text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--green-dark); font-weight: 600;">Desviación actual</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--green-dark);">+<span data-counter="9.3" data-suffix="%">0</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="demo-nav">
+    <a href="index.html">📋 Índice</a>
+    <a href="01-dashboard-kpis.html">1</a>
+    <a href="02-registro-lectura.html">2</a>
+    <a href="03-anomalia-ia.html">3</a>
+    <a href="04-crear-ticket.html">4</a>
+    <a href="05-retos-ranking.html">5</a>
+    <a href="06-mobile-tickets.html">6</a>
+    <a href="07-mobile-cierre.html">7</a>
+    <a href="08-mobile-reto.html">8</a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
