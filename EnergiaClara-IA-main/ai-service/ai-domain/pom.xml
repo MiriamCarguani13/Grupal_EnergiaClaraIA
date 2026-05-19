@@ -6,24 +6,20 @@
 
     <parent>
         <groupId>com.energiaclara</groupId>
-        <artifactId>energiaclara-platform</artifactId>
+        <artifactId>ai-service</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>energiaclara-application</artifactId>
+    <artifactId>ai-domain</artifactId>
     <packaging>jar</packaging>
-    <name>energiaclara-application</name>
+    <name>ai-domain</name>
+    <description>Dominio puro AI: aggregates, value objects, domain events, invariantes. Framework-agnostic.</description>
 
     <dependencies>
         <dependency>
             <groupId>com.energiaclara</groupId>
             <artifactId>core-platform</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.energiaclara</groupId>
-            <artifactId>iam-service</artifactId>
             <version>${project.version}</version>
         </dependency>
 

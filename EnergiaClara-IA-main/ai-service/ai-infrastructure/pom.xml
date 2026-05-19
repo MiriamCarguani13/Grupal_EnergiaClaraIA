@@ -6,14 +6,15 @@
 
     <parent>
         <groupId>com.energiaclara</groupId>
-        <artifactId>energiaclara-platform</artifactId>
+        <artifactId>ai-service</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>energiaclara-application</artifactId>
+    <artifactId>ai-infrastructure</artifactId>
     <packaging>jar</packaging>
-    <name>energiaclara-application</name>
+    <name>ai-infrastructure</name>
+    <description>Adapters AI: Spring AI, vector store, persistence JPA, integraciones externas.</description>
 
     <dependencies>
         <dependency>
@@ -23,15 +24,25 @@
         </dependency>
         <dependency>
             <groupId>com.energiaclara</groupId>
-            <artifactId>iam-service</artifactId>
+            <artifactId>ai-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.energiaclara</groupId>
+            <artifactId>ai-application</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.tngtech.archunit</groupId>
-            <artifactId>archunit-junit5</artifactId>
-            <scope>test</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <!-- Cuando se agregue: spring-ai-starter, openai-spring-boot-starter, pgvector-spring-boot-starter -->
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

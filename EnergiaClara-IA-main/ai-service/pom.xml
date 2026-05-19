@@ -11,20 +11,16 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>core-platform</artifactId>
-    <packaging>jar</packaging>
-    <name>core-platform</name>
+    <artifactId>ai-service</artifactId>
+    <packaging>pom</packaging>
+    <name>ai-service</name>
+    <description>Bounded context AI / detección de anomalías. Sub-módulos Clean Architecture.</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.tngtech.archunit</groupId>
-            <artifactId>archunit-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>ai-domain</module>
+        <module>ai-application</module>
+        <module>ai-infrastructure</module>
+        <module>ai-api</module>
+        <module>ai-bootstrap</module>
+    </modules>
 </project>
