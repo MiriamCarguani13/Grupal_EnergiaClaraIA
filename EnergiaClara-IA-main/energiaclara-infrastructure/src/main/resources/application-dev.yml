@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    show-sql: true
+logging:
+  level:
+    com.energiaclara: DEBUG
+    org.springframework.security: DEBUG
+security:
+  jwt:
+    enabled: false

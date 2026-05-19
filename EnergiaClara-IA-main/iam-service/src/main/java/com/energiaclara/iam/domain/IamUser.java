@@ -37,6 +37,10 @@ public class IamUser {
         return new IamUser(UserId.generate(), tenantId, email, fullName, hashedPassword, roles, true, Instant.now());
     }
 
+    public static IamUser hydrate(UserId id, TenantId tenantId, Email email, String fullName, String hashedPassword, Set<Role> roles, boolean active, Instant createdAt) {
+        return new IamUser(id, tenantId, email, fullName, hashedPassword, roles, active, createdAt);
+    }
+
     public AuthenticatedPrincipal authenticate() {
         if (!active) {
             throw new DomainException("Usuario IAM inactivo: " + id.value());

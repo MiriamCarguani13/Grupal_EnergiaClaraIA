@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: energiaclara-ai
+  datasource:
+    url: ${DB_URL:jdbc:sqlserver://localhost:1433;databaseName=EnergiaClaraDB;encrypt=false;trustServerCertificate=true}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:YourStrong!Passw0rd}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        jdbc.time_zone: UTC
+        format_sql: false
+    open-in-view: false
+    show-sql: false
+  flyway:
+    enabled: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+  error:
+    include-message: never
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+security:
+  jwt:
+    enabled: ${JWT_ENABLED:true}
+  token:
+    issuer: ${JWT_ISSUER:energiaclara-ai}
+    secret: ${JWT_SECRET:change-me-in-prod-must-be-at-least-32-chars-long-please-32chars}
+    access-token-minutes: ${JWT_ACCESS_MIN:60}
+
+cors:
+  allowed-origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:5173}
+
+iam:
+  rate-limit:
+    enabled: true
+    max-requests: 10
+    window-seconds: 60
+    paths:
+      - /api/auth/login
+
+logging:
+  level:
+    com.energiaclara: INFO
+    org.springframework.security: INFO
+    org.hibernate.SQL: WARN
