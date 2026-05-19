@@ -64,6 +64,22 @@ public class AnomaliaEntity {
     @Column(name = "resuelta_por")
     private UUID resueltaPor;
 
+    // Columnas extras DBA (database/seeds.sql) — recomendación IA + cálculo impacto + labels
+    @Column(name = "recomendacion", length = 700)
+    private String recomendacion;
+
+    @Column(name = "costo_estimado", precision = 12, scale = 2)
+    private BigDecimal costoEstimado;
+
+    @Column(name = "co2_estimado", precision = 12, scale = 2)
+    private BigDecimal co2Estimado;
+
+    @Column(name = "facility_label", length = 80)
+    private String facilityLabel;
+
+    @Column(name = "meter_label", length = 80)
+    private String meterLabel;
+
     @Version
     @Column(name = "version_fila", nullable = false, insertable = false, updatable = false)
     private byte[] versionFila;
@@ -101,5 +117,15 @@ public class AnomaliaEntity {
     public void setResueltaEl(Instant v) { this.resueltaEl = v; }
     public UUID getResueltaPor() { return resueltaPor; }
     public void setResueltaPor(UUID v) { this.resueltaPor = v; }
+    public String getRecomendacion() { return recomendacion; }
+    public void setRecomendacion(String v) { this.recomendacion = v; }
+    public BigDecimal getCostoEstimado() { return costoEstimado; }
+    public void setCostoEstimado(BigDecimal v) { this.costoEstimado = v; }
+    public BigDecimal getCo2Estimado() { return co2Estimado; }
+    public void setCo2Estimado(BigDecimal v) { this.co2Estimado = v; }
+    public String getFacilityLabel() { return facilityLabel; }
+    public void setFacilityLabel(String v) { this.facilityLabel = v; }
+    public String getMeterLabel() { return meterLabel; }
+    public void setMeterLabel(String v) { this.meterLabel = v; }
     public byte[] getVersionFila() { return versionFila; }
 }

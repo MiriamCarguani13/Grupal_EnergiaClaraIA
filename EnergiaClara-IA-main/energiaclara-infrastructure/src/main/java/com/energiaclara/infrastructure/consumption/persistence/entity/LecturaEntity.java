@@ -53,6 +53,19 @@ public class LecturaEntity {
     @Column(name = "registrada_por", nullable = false)
     private UUID registradaPor;
 
+    // Columnas extras agregadas por DBA (database/seeds.sql) — denormalización + métricas eléctricas
+    @Column(name = "facility_label", length = 80)
+    private String facilityLabel;
+
+    @Column(name = "meter_label", length = 80)
+    private String meterLabel;
+
+    @Column(name = "voltaje", precision = 10, scale = 3)
+    private BigDecimal voltaje;
+
+    @Column(name = "factor_potencia", precision = 5, scale = 3)
+    private BigDecimal factorPotencia;
+
     @Version
     @Column(name = "version_fila", nullable = false, insertable = false, updatable = false)
     private byte[] versionFila;
@@ -85,6 +98,14 @@ public class LecturaEntity {
     public void setEstado(String v) { this.estado = v; }
     public UUID getRegistradaPor() { return registradaPor; }
     public void setRegistradaPor(UUID v) { this.registradaPor = v; }
+    public String getFacilityLabel() { return facilityLabel; }
+    public void setFacilityLabel(String v) { this.facilityLabel = v; }
+    public String getMeterLabel() { return meterLabel; }
+    public void setMeterLabel(String v) { this.meterLabel = v; }
+    public BigDecimal getVoltaje() { return voltaje; }
+    public void setVoltaje(BigDecimal v) { this.voltaje = v; }
+    public BigDecimal getFactorPotencia() { return factorPotencia; }
+    public void setFactorPotencia(BigDecimal v) { this.factorPotencia = v; }
     public byte[] getVersionFila() { return versionFila; }
     public Instant getCreadoEn() { return creadoEn; }
     public void setCreadoEn(Instant v) { this.creadoEn = v; }

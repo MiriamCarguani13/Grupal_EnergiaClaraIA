@@ -29,6 +29,7 @@ Bounded context: **medición + registro de lecturas energéticas**.
 - [ ] Validar tenantId del JWT == tenantId de la lectura
 - [ ] Auditoría: `READING_REGISTERED` vía `AuditTrailService`
 - [ ] Wiring beans application service en `EnergyOpsWiringConfig` (compartido con energyops)
+- [ ] **Columnas extras DBA** (ya en `LecturaEntity`): `facility_label`, `meter_label`, `voltaje`, `factor_potencia`. Poblar si llegan en payload. Útiles para dashboard sin extra join
 
 ## Reglas
 - Tabla `consumo.lectura` tiene `version_fila timestamp` → `@Version byte[]` en entity

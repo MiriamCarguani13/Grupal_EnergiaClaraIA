@@ -32,6 +32,12 @@ Bounded context **core domain**: detección de anomalías + gestión de baseline
 - [ ] Endpoint compuesto `analyze-reading` orquesta 2-3 use cases
 - [ ] Auditoría: `ANOMALY_DETECTED`, `ANOMALY_ACKNOWLEDGED`, `ANOMALY_RESOLVED`
 - [ ] Cache baseline activa (v2) — caro recargar todas en cada llamada
+- [ ] **Columnas extras DBA** (ya en entities):
+  - `snapshot_linea_base.activo` — **CRÍTICO**, filtrar `WHERE activo=true` en baseline provider
+  - `snapshot_linea_base.tolerancia_porcentaje` — usar para cálculo umbral anomalía
+  - `anomalia.recomendacion` — texto IA output
+  - `anomalia.costo_estimado`, `co2_estimado` — calcular impacto antes de persistir
+  - `*.facility_label`, `meter_label` — denormalización para queries dashboard
 
 ## Reglas (Fase 2 §2.2.3)
 - Una anomalía no puede cambiar de tipo una vez confirmada (invariante)

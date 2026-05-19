@@ -101,10 +101,13 @@ sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -Q "CREATE DATABASE EnergiaCl
 # 2. Cargar schema (32 tablas en 8 schemas: iam, core, consumo, energiaops, audit, analitica, educacion, mantenimiento)
 sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -d EnergiaClaraDB -i "database/script.sql"
 
-# 3. Cargar roles base (6 roles: ADMIN_INSTITUCION, DIRECTOR, DOCENTE, TECNICO, ESTUDIANTE, AUDITOR)
-sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -d EnergiaClaraDB -i "../_seed_roles.sql"
-
-# 4. Cargar seeds demo (tenant 11111111..., admin@demo.edu)
+# 3. Cargar seeds DBA — idempotente, incluye:
+#    - 6 roles canónicos (ADMIN_INSTITUCION, DIRECTOR, DOCENTE, TECNICO, ESTUDIANTE, AUDITOR)
+#    - Tenant demo 11111111..., admin@demo.edu, edificio, medidor, baseline activa
+#    - ALTER TABLE agregando columnas extras: facility_label/meter_label/voltaje/factor_potencia (consumo.lectura),
+#      tolerancia_porcentaje/activo/labels (energiaops.snapshot_linea_base),
+#      recomendacion/costo_estimado/co2_estimado/labels (energiaops.anomalia),
+#      metodo_http/endpoint/user_email/user_agent/estado/mensaje_error/duracion_ms (audit.evento_auditoria)
 sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -d EnergiaClaraDB -i "database/seeds.sql"
 ```
 

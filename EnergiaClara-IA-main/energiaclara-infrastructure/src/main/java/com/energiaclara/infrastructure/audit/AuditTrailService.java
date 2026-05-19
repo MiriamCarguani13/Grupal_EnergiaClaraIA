@@ -15,6 +15,9 @@ public class AuditTrailService {
 
     private static final Logger log = LoggerFactory.getLogger(AuditTrailService.class);
 
+    // Columnas core canónicas. Columnas extras (metodo_http, endpoint, user_email,
+    // user_agent, estado, mensaje_error, duracion_ms) agregadas por DBA seeds.sql
+    // quedan NULL — uso reservado para audit AOP estilo HTTP (futuro módulo).
     private static final String INSERT_SQL = """
             INSERT INTO audit.evento_auditoria
                 (evento_id, inquilino_id, actor_id, accion, tipo_recurso, recurso_id,
