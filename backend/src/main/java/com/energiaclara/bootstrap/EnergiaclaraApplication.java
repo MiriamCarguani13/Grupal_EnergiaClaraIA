@@ -1,4 +1,4 @@
- package com.energiaclara.bootstrap;
+package com.energiaclara.bootstrap;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
