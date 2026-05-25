@@ -25,5 +25,12 @@ app:
     cost-per-kwh: 1.50625
     co2-kg-per-kwh: 0.44
 
+  ai:
+    enabled: ${AI_ENABLED:true}
+    base-url: ${AI_BASE_URL:http://localhost:8090}
+    predict-path: ${AI_PREDICT_PATH:/predict-energy-anomaly}
+    timeout-ms: ${AI_TIMEOUT_MS:2000}
+    fallback-to-rules: ${AI_FALLBACK_TO_RULES:true}
+
 server:
   port: 8080
