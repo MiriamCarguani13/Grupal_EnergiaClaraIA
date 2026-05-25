@@ -35,7 +35,7 @@ BEGIN
     INSERT INTO [core].[inquilino]
       (inquilino_id, nombre, nombre_legal, nit_rut, tipo_plan, factor_co2, codigo_moneda, esta_activo, creado_en, actualizado_en)
     VALUES
-      (@tenantId, 'Instituto Tecnológico Demo', 'Instituto Tecnológico Demo SA', '0000000000', 'FREEMIUM',
+      (@tenantId, 'Instituto Tecnológico Demo', 'Instituto Tecnológico Demo SA', '0000000000', 'BASIC',
        0.250000, 'BOB', 1, SYSUTCDATETIME(), SYSUTCDATETIME());
 END
 
@@ -70,7 +70,7 @@ BEGIN
     INSERT INTO [core].[medidor]
       (medidor_id, inquilino_id, edificio_id, codigo_medidor, tipo_medidor, unidad, descripcion_ubicacion, esta_activo, instalado_el, creado_en, actualizado_en)
     VALUES
-      (@medidorId, @tenantId, @edificioId, 'MED-DEMO-001', 'ELECTRICO', 'kWh', 'Tablero principal demo', 1,
+      (@medidorId, @tenantId, @edificioId, 'MED-DEMO-001', 'ELECTRICIDAD', 'kWh', 'Tablero principal demo', 1,
        CAST(SYSUTCDATETIME() AS DATE), SYSUTCDATETIME(), SYSUTCDATETIME());
 END
 GO

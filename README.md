@@ -104,10 +104,10 @@ Corre en `http://localhost:5173`. Hace proxy de `/api` → `http://localhost:808
 EnergiaClara-IA/
 ├── backend/                        # Spring Boot 3.2, Java 21
 │   └── src/main/java/com/energiaclara/
-│       ├── domain/                 # Aggregates, Value Objects, puertos
-│       ├── application/            # Casos de uso, DTOs, servicios
-│       ├── infrastructure/         # JPA (schema [iam]), JWT, Spring Security
-│       ├── api/                    # REST controllers, DTOs, exception handler
+│       ├── domain/                 # Aggregates, Value Objects, dominio transversal
+│       ├── application/            # Casos de uso, DTOs internos, puertos in/out, servicios
+│       ├── infrastructure/         # JPA/adapters ([iam], [consumo], [energiaops], [audit]), JWT, Spring Security
+│       ├── api/                    # REST controllers, DTOs externos, exception handler
 │       └── bootstrap/              # Main class
 ├── frontend/                       # React 18 + Vite
 │   └── src/
@@ -122,16 +122,19 @@ EnergiaClara-IA/
 
 ---
 
-## Endpoints disponibles (MVP Auth)
+## Endpoints disponibles (MVP)
 
 | Método | Ruta | Acceso | Descripción |
 |---|---|---|---|
 | POST | `/api/auth/login` | Público | Retorna JWT (auditado en `[audit].[evento_auditoria]`) |
 | POST | `/api/auth/register` | ADMIN_INSTITUCION | Crea usuario en el tenant (auditado) |
-| POST | `/api/energyops/analyze-reading` | Autenticado | Persiste lectura en `[consumo].[lectura]`, detecta anomalía → `[energiaops].[anomalia]` |
-| GET  | `/api/analytics/dashboard` | Autenticado | KPIs derivados de lecturas + anomalías + baseline activa |
-| GET  | `/api/analytics/kpis` | Autenticado | KPIs por lectura (cálculo on-the-fly) |
-| GET  | `/api/analytics/anomalies` | Autenticado | Anomalías recientes (`[energiaops].[anomalia]`) |
+| POST | `/api/energyops/analyze-reading` | Demo temporal (`permitAll`) | Persiste lectura en `[consumo].[lectura]`, detecta anomalía → `[energiaops].[anomalia]` |
+| GET  | `/api/analytics/dashboard` | Demo temporal (`permitAll`) | KPIs derivados de lecturas + anomalías + baseline activa |
+| GET  | `/api/analytics/kpis` | Demo temporal (`permitAll`) | KPIs por lectura (cálculo on-the-fly) |
+| GET  | `/api/analytics/anomalies` | Demo temporal (`permitAll`) | Anomalías recientes (`[energiaops].[anomalia]`) |
+
+> Para el MVP demo, EnergyOps y Analytics estan abiertos para no romper el flujo del frontend local.
+> Antes de produccion deben protegerse con JWT/RBAC.
 
 ### Ejemplo login
 

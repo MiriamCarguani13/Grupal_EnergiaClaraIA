@@ -5,63 +5,83 @@ import com.energiaclara.application.dto.LoginResult;
 import com.energiaclara.application.dto.RegisterUserCommand;
 import com.energiaclara.application.port.in.LoginUseCase;
 import com.energiaclara.application.port.in.RegisterUserUseCase;
+import com.energiaclara.application.port.out.PasswordHasherPort;
 import com.energiaclara.application.port.out.TokenPort;
+import com.energiaclara.application.port.out.UserRepositoryPort;
+import com.energiaclara.domain.model.Role;
 import com.energiaclara.domain.model.User;
+import com.energiaclara.domain.model.vo.Email;
+import com.energiaclara.domain.model.vo.TenantId;
 import com.energiaclara.domain.model.vo.UserId;
-import com.energiaclara.domain.port.out.UserRepositoryPort;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthApplicationService implements LoginUseCase, RegisterUserUseCase {
 
     private final UserRepositoryPort userRepository;
     private final TokenPort tokenPort;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordHasherPort passwordHasher;
 
     public AuthApplicationService(UserRepositoryPort userRepository,
                                   TokenPort tokenPort,
-                                  PasswordEncoder passwordEncoder) {
+                                  PasswordHasherPort passwordHasher) {
         this.userRepository = userRepository;
         this.tokenPort = tokenPort;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordHasher = passwordHasher;
     }
 
     @Override
     @Transactional(readOnly = true)
     public LoginResult login(LoginCommand command) {
-        User user = userRepository.findByEmailAndTenantId(command.email(), command.tenantId())
+        User user = userRepository.findByEmailAndTenantId(Email.of(command.email()), TenantId.of(command.tenantId()))
                 .orElseThrow(() -> new IllegalArgumentException("Credenciales inválidas"));
 
         if (!user.isActive()) {
             throw new IllegalStateException("Usuario inactivo");
         }
 
-        if (!passwordEncoder.matches(command.password(), user.getHashedPassword())) {
+        if (!passwordHasher.matches(command.password(), user.getHashedPassword())) {
             throw new IllegalArgumentException("Credenciales inválidas");
         }
 
         String token = tokenPort.generateToken(user);
-        return new LoginResult(token, user.getId().toString(), user.getTenantId().toString(), user.getRoles());
+        return new LoginResult(token, user.getId().toString(), user.getTenantId().toString(), toRoleNames(user.getRoles()));
     }
 
     @Override
     @Transactional
-    public UserId register(RegisterUserCommand command) {
-        if (userRepository.existsByEmailAndTenantId(command.email(), command.tenantId())) {
+    public String register(RegisterUserCommand command) {
+        TenantId tenantId = TenantId.of(command.tenantId());
+        Email email = Email.of(command.email());
+        if (userRepository.existsByEmailAndTenantId(email, tenantId)) {
             throw new IllegalArgumentException("Email ya registrado en esta institución");
         }
 
-        String hashed = passwordEncoder.encode(command.rawPassword());
+        String hashed = passwordHasher.hash(command.rawPassword());
         User user = User.create(
-                command.tenantId(),
-                command.email(),
+                tenantId,
+                email,
                 command.fullName(),
                 hashed,
-                command.roles()
+                toRoles(command.roles())
         );
-        userRepository.save(user, command.assignedBy());
-        return user.getId();
+        userRepository.save(user, UserId.of(command.assignedBy()));
+        return user.getId().toString();
+    }
+
+    private Set<Role> toRoles(Set<String> roles) {
+        return roles.stream()
+                .map(Role::valueOf)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private Set<String> toRoleNames(Set<Role> roles) {
+        return roles.stream()
+                .map(Role::name)
+                .collect(Collectors.toUnmodifiableSet());
     }
 }

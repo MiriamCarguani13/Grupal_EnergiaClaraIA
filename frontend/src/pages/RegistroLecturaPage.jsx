@@ -7,7 +7,7 @@ export default function RegistroLecturaPage() {
     facilityId: 'Sede Central - Bloque B - Aula 3B',
     meterId: 'MED-DEMO-001',
     measuredAt: new Date().toISOString().slice(0, 16),
-    kwh: 1248,
+    kwh: 165,
     voltage: 220,
     powerFactor: 0.95,
     observaciones: '',

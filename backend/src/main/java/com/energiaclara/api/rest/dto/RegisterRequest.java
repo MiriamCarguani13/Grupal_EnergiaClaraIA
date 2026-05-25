@@ -1,6 +1,5 @@
 package com.energiaclara.api.rest.dto;
 
-import com.energiaclara.domain.model.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,5 +12,5 @@ public record RegisterRequest(
         @Email @NotBlank String email,
         @NotBlank @Size(min = 3, max = 200) String fullName,
         @NotBlank @Size(min = 8) String password,
-        @NotEmpty Set<Role> roles
+        @NotEmpty Set<String> roles
 ) {}

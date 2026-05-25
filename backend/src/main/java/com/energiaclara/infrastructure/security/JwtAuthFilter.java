@@ -1,5 +1,6 @@
 package com.energiaclara.infrastructure.security;
 
+import com.energiaclara.application.security.AuthenticatedUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
