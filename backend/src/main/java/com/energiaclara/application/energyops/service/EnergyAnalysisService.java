@@ -5,10 +5,13 @@ import com.energiaclara.application.energyops.dto.AnalyzeEnergyReadingResult;
 import com.energiaclara.application.energyops.dto.EnergyAnomalyRecord;
 import com.energiaclara.application.energyops.dto.EnergyBaselineRecord;
 import com.energiaclara.application.energyops.dto.EnergyReadingRecord;
+import com.energiaclara.application.energyops.dto.EnergyAiPredictionInput;
+import com.energiaclara.application.energyops.dto.EnergyAiPredictionResult;
 import com.energiaclara.application.port.in.AnalyzeEnergyReadingUseCase;
 import com.energiaclara.application.port.out.FindEnergyBaselinePort;
 import com.energiaclara.application.port.out.SaveEnergyAnomalyPort;
 import com.energiaclara.application.port.out.SaveEnergyReadingPort;
+import com.energiaclara.application.port.out.EnergyAiPredictionPort;
 import com.energiaclara.domain.energyops.AnomalySeverity;
 import com.energiaclara.domain.energyops.AnomalyType;
 import com.energiaclara.domain.energyops.EnergyAnalysisPolicy;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,6 +34,7 @@ public class EnergyAnalysisService implements AnalyzeEnergyReadingUseCase {
     private final SaveEnergyReadingPort saveEnergyReadingPort;
     private final FindEnergyBaselinePort findEnergyBaselinePort;
     private final SaveEnergyAnomalyPort saveEnergyAnomalyPort;
+    private final EnergyAiPredictionPort energyAiPredictionPort;
     private final UUID demoTenantId;
     private final UUID demoMedidorId;
     private final UUID demoUserId;
@@ -42,6 +47,7 @@ public class EnergyAnalysisService implements AnalyzeEnergyReadingUseCase {
             SaveEnergyReadingPort saveEnergyReadingPort,
             FindEnergyBaselinePort findEnergyBaselinePort,
             SaveEnergyAnomalyPort saveEnergyAnomalyPort,
+            EnergyAiPredictionPort energyAiPredictionPort,
             @Value("${app.energyops.demo-tenant-id:11111111-1111-1111-1111-111111111111}") UUID demoTenantId,
             @Value("${app.energyops.demo-medidor-id:33333333-3333-3333-3333-333333333333}") UUID demoMedidorId,
             @Value("${app.energyops.demo-user-id:44444444-4444-4444-4444-444444444444}") UUID demoUserId,
@@ -53,6 +59,7 @@ public class EnergyAnalysisService implements AnalyzeEnergyReadingUseCase {
         this.saveEnergyReadingPort = saveEnergyReadingPort;
         this.findEnergyBaselinePort = findEnergyBaselinePort;
         this.saveEnergyAnomalyPort = saveEnergyAnomalyPort;
+        this.energyAiPredictionPort = energyAiPredictionPort;
         this.demoTenantId = demoTenantId;
         this.demoMedidorId = demoMedidorId;
         this.demoUserId = demoUserId;
@@ -84,26 +91,68 @@ public class EnergyAnalysisService implements AnalyzeEnergyReadingUseCase {
                 command.powerFactor()
         ));
 
-        BigDecimal deviationPercent = EnergyAnalysisPolicy.calculateDeviationPercent(command.kwh(), baseline.expectedKwh());
-        boolean anomalyDetected = EnergyAnalysisPolicy.exceedsTolerance(deviationPercent, baseline.tolerancePercent());
-        BigDecimal excessKwh = EnergyAnalysisPolicy.excessKwh(command.kwh(), baseline.expectedKwh());
+        EnergyAiPredictionInput aiInput = new EnergyAiPredictionInput(
+                demoTenantId,
+                demoMedidorId,
+                command.facilityId(),
+                command.meterId(),
+                command.measuredAt(),
+                command.kwh(),
+                command.voltage(),
+                command.powerFactor(),
+                baseline.expectedKwh(),
+                baseline.tolerancePercent()
+        );
+
+        Optional<EnergyAiPredictionResult> aiPrediction = energyAiPredictionPort.predict(aiInput);
+
+        BigDecimal deviationPercent;
+        boolean anomalyDetected;
+        BigDecimal excessKwh;
+        String recommendation;
+        String explanation;
+        boolean iaUtilizada;
+        AnomalySeverity severity = null;
+
+        if (aiPrediction.isPresent()) {
+            EnergyAiPredictionResult result = aiPrediction.get();
+            iaUtilizada = true;
+            anomalyDetected = result.anomalyDetected();
+            deviationPercent = EnergyAnalysisPolicy.calculateDeviationPercent(command.kwh(), result.predictedKwh());
+            excessKwh = EnergyAnalysisPolicy.excessKwh(command.kwh(), result.predictedKwh());
+            recommendation = result.recommendation();
+            explanation = result.explanation();
+            if (anomalyDetected) {
+                severity = EnergyAnalysisPolicy.severityFor(deviationPercent);
+                if (severity == null) {
+                    severity = AnomalySeverity.MEDIUM;
+                }
+            }
+        } else {
+            iaUtilizada = false;
+            deviationPercent = EnergyAnalysisPolicy.calculateDeviationPercent(command.kwh(), baseline.expectedKwh());
+            anomalyDetected = EnergyAnalysisPolicy.exceedsTolerance(deviationPercent, baseline.tolerancePercent());
+            excessKwh = EnergyAnalysisPolicy.excessKwh(command.kwh(), baseline.expectedKwh());
+            recommendation = anomalyDetected ? "Revisar equipos activos fuera de horario o consumo superior al baseline." : "Consumo dentro del rango esperado del baseline.";
+            explanation = anomalyDetected ? "La lectura supera el baseline configurado para el medidor." : "Lectura normal basada en heuristica local.";
+            if (anomalyDetected) {
+                severity = EnergyAnalysisPolicy.severityFor(deviationPercent);
+            }
+        }
+
         BigDecimal estimatedCostImpact = EnergyAnalysisPolicy.roundImpact(excessKwh.multiply(costPerKwh));
         BigDecimal estimatedCo2Impact = EnergyAnalysisPolicy.roundImpact(excessKwh.multiply(co2KgPerKwh));
 
         EnergyAnomalyRecord anomaly = null;
-        AnomalySeverity severity = null;
-        String recommendation = "Consumo dentro del rango esperado del baseline.";
 
         if (anomalyDetected) {
-            severity = EnergyAnalysisPolicy.severityFor(deviationPercent);
-            recommendation = "Revisar equipos activos fuera de horario o consumo superior al baseline.";
-            anomaly = buildAnomaly(reading, deviationPercent, severity, recommendation, estimatedCostImpact, estimatedCo2Impact);
+            anomaly = buildAnomaly(reading, deviationPercent, severity, explanation, recommendation, estimatedCostImpact, estimatedCo2Impact, iaUtilizada);
             anomaly = saveEnergyAnomalyPort.save(anomaly);
-            log.info("Anomalia detectada readingId={} anomalyId={} severity={} deviationPercent={}",
-                    reading.id(), anomaly.id(), severity, deviationPercent);
+            log.info("Anomalia detectada readingId={} anomalyId={} severity={} deviationPercent={} iaUtilizada={}",
+                    reading.id(), anomaly.id(), severity, deviationPercent, iaUtilizada);
         } else {
-            log.info("Sin anomalia readingId={} deviationPercent={} tolerancePercent={}",
-                    reading.id(), deviationPercent, baseline.tolerancePercent());
+            log.info("Sin anomalia readingId={} deviationPercent={} tolerancePercent={} iaUtilizada={}",
+                    reading.id(), deviationPercent, baseline.tolerancePercent(), iaUtilizada);
         }
 
         return new AnalyzeEnergyReadingResult(
@@ -139,9 +188,11 @@ public class EnergyAnalysisService implements AnalyzeEnergyReadingUseCase {
             EnergyReadingRecord reading,
             BigDecimal deviationPercent,
             AnomalySeverity severity,
+            String explanation,
             String recommendation,
             BigDecimal estimatedCostImpact,
-            BigDecimal estimatedCo2Impact
+            BigDecimal estimatedCo2Impact,
+            boolean iaUtilizada
     ) {
         return new EnergyAnomalyRecord(
                 null,
@@ -155,11 +206,11 @@ public class EnergyAnalysisService implements AnalyzeEnergyReadingUseCase {
                 severity,
                 EnergyAnalysisPolicy.scoreFor(severity),
                 EnergyAnalysisPolicy.roundPercent(deviationPercent),
-                "La lectura supera el baseline configurado para el medidor.",
+                explanation,
                 recommendation,
                 estimatedCostImpact,
                 estimatedCo2Impact,
-                false,
+                iaUtilizada,
                 "ABIERTA"
         );
     }
