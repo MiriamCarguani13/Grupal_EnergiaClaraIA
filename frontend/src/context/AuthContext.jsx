@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect } from 'react'
 
 const AuthContext = createContext(null)
 
@@ -16,6 +16,17 @@ export function AuthProvider({ children }) {
   const logout = useCallback(() => {
     localStorage.removeItem('ec_auth')
     setAuth(null)
+  }, [])
+
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'ec_auth') {
+        const newValue = e.newValue ? JSON.parse(e.newValue) : null
+        setAuth(newValue)
+      }
+    }
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
   return (

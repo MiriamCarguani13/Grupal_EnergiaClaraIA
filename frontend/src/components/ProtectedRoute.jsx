@@ -7,6 +7,11 @@ export default function ProtectedRoute({ children, requiredRoles }) {
   if (!auth) return <Navigate to="/login" replace />
 
   if (requiredRoles && !requiredRoles.some((r) => auth.roles?.includes(r))) {
+    if (auth.roles?.includes('TECNICO')) {
+      return <Navigate to="/m/tickets" replace />
+    } else if (auth.roles?.includes('ESTUDIANTE')) {
+      return <Navigate to="/m/reto" replace />
+    }
     return <Navigate to="/dashboard" replace />
   }
 

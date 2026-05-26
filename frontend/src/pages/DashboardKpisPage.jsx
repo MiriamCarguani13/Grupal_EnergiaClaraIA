@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import AppLayout from '../components/AppLayout'
 import { fetchDashboard } from '../services/analyticsService'
-import { mockReto, mockTickets } from '../services/mockService'
+import { mockReto } from '../services/mockService'
+import { ticketService } from '../services/ticketService'
 
 function formatNumber(n) {
   if (n === null || n === undefined) return '—'
@@ -30,10 +31,24 @@ export default function DashboardKpisPage() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [tickets, setTickets] = useState([])
+  const [techMap, setTechMap] = useState({})
 
   useEffect(() => {
-    fetchDashboard()
-      .then(setData)
+    Promise.all([
+      fetchDashboard(),
+      ticketService.getTickets().catch(() => []),
+      ticketService.getTechnicians().catch(() => []),
+    ])
+      .then(([dbData, ticketList, techList]) => {
+        setData(dbData)
+        setTickets(ticketList)
+        const mapping = {}
+        techList.forEach((t) => {
+          mapping[t.id] = t.nombre
+        })
+        setTechMap(mapping)
+      })
       .catch((err) => setError(err.response?.data?.message || 'Error cargando dashboard'))
       .finally(() => setLoading(false))
   }, [])
@@ -125,7 +140,7 @@ export default function DashboardKpisPage() {
       <div className="row-2">
         <div className="card">
           <div className="card-title">
-            Tickets Recientes <span className="badge info" style={{ marginLeft: 8 }}>MOCK</span>
+            Tickets Recientes
             <Link to="/tickets/nuevo" className="btn btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}>+ Nuevo</Link>
           </div>
           <table>
@@ -133,14 +148,26 @@ export default function DashboardKpisPage() {
               <tr><th>ID</th><th>Descripción</th><th>Técnico</th><th>Estado</th></tr>
             </thead>
             <tbody>
-              {mockTickets.map((t) => (
-                <tr key={t.id}>
-                  <td><strong>{t.id}</strong></td>
-                  <td>{t.titulo}</td>
-                  <td>{t.tecnico}</td>
-                  <td><span className={`badge ${t.estado === 'CERRADO' ? 'success' : t.estado === 'EN_PROCESO' ? 'process' : 'info'}`}>{t.estado.replace('_', ' ')}</span></td>
+              {tickets.length === 0 ? (
+                <tr>
+                  <td colSpan="4" style={{ textAlign: 'center', color: 'var(--gray-500)', fontSize: '0.85rem', padding: '1rem' }}>
+                    Sin tickets de mantenimiento registrados.
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                tickets.slice(0, 5).map((t) => (
+                  <tr key={t.ticketId}>
+                    <td><strong>{t.ticketId.slice(0, 8)}</strong></td>
+                    <td>{t.titulo}</td>
+                    <td>{techMap[t.asignadoA] || 'Sin asignar'}</td>
+                    <td>
+                      <span className={`badge ${t.estado === 'CERRADO' ? 'success' : t.estado === 'ASIGNADO' ? 'info' : 'process'}`}>
+                        {t.estado ? t.estado.replace('_', ' ') : 'CREADO'}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

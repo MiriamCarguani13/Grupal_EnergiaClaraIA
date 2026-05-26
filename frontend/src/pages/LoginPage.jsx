@@ -19,8 +19,14 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const data = await loginRequest(form)
-      login(data)
-      navigate('/dashboard')
+      login({ ...data, email: form.email })
+      if (data.roles?.includes('TECNICO')) {
+        navigate('/m/tickets')
+      } else if (data.roles?.includes('ESTUDIANTE')) {
+        navigate('/m/reto')
+      } else {
+        navigate('/dashboard')
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Credenciales inválidas')
     } finally {
