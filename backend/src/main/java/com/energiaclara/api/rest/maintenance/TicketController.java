@@ -24,6 +24,16 @@ public class TicketController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTicket);
     }
 
+    @GetMapping
+    public ResponseEntity<java.util.List<Ticket>> getAllTickets() {
+        return ResponseEntity.ok(ticketService.getAllTickets());
+    }
+
+    @GetMapping("/{ticketId}")
+    public ResponseEntity<Ticket> getTicketById(@PathVariable UUID ticketId) {
+        return ResponseEntity.ok(ticketService.getTicketById(ticketId));
+    }
+
     @PutMapping("/{ticketId}/assign")
     public ResponseEntity<Ticket> assignTicket(@PathVariable UUID ticketId, @RequestBody Map<String, String> body) {
         String tecnicoIdStr = body.get("tecnicoId");

@@ -30,6 +30,11 @@ public class TicketPersistenceAdapter implements TicketRepositoryPort {
         return ticketJpaRepository.findById(ticketId).map(this::toDomain);
     }
 
+    @Override
+    public java.util.List<Ticket> findAll() {
+        return ticketJpaRepository.findAllByOrderByCreadoEnDesc().stream().map(this::toDomain).toList();
+    }
+
     private TicketEntity toEntity(Ticket domain) {
         return TicketEntity.builder()
                 .ticketId(domain.getTicketId())

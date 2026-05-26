@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface TicketJpaRepository extends JpaRepository<TicketEntity, UUID> {
+    java.util.List<TicketEntity> findAllByOrderByCreadoEnDesc();
 }

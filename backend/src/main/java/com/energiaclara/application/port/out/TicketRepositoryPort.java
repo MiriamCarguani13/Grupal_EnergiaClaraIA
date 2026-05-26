@@ -8,4 +8,5 @@ import java.util.UUID;
 public interface TicketRepositoryPort {
     Ticket save(Ticket ticket);
     Optional<Ticket> findById(UUID ticketId);
+    java.util.List<Ticket> findAll();
 }

@@ -62,4 +62,15 @@ public class TicketService {
         ticket.cerrar(tecnicoId);
         return ticketRepositoryPort.save(ticket);
     }
+
+    @Transactional(readOnly = true)
+    public java.util.List<Ticket> getAllTickets() {
+        return ticketRepositoryPort.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Ticket getTicketById(UUID ticketId) {
+        return ticketRepositoryPort.findById(ticketId)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket no encontrado"));
+    }
 }

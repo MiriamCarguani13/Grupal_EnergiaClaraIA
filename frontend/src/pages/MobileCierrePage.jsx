@@ -1,7 +1,8 @@
-import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import MobileLayout from '../components/MobileLayout'
-import { getMockTicketById } from '../services/mockService'
+import { ticketService } from '../services/ticketService'
+import { useAuth } from '../context/AuthContext'
 
 const CHECKLIST = [
   'Verificación temporizador iluminación',
@@ -13,11 +14,27 @@ const CHECKLIST = [
 export default function MobileCierrePage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const ticket = getMockTicketById(id)
+  const { auth } = useAuth()
+  const [ticket, setTicket] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [checks, setChecks] = useState({})
   const [descripcion, setDescripcion] = useState('')
   const [hasFoto, setHasFoto] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+
+  useEffect(() => {
+    ticketService.getTicketById(id).then(data => {
+      setTicket(data)
+      setLoading(false)
+    }).catch(err => {
+      console.error(err)
+      setLoading(false)
+    })
+  }, [id])
+
+  if (loading) {
+    return <MobileLayout title="Cargando..." backTo="/m/tickets"><p>Cargando ticket...</p></MobileLayout>
+  }
 
   if (!ticket) {
     return (
@@ -27,23 +44,25 @@ export default function MobileCierrePage() {
     )
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSubmitted(true)
-    setTimeout(() => navigate('/m/tickets'), 1500)
+    try {
+      await ticketService.closeTicket(id, auth.userId, "QR-FALSO-123")
+      setSubmitted(true)
+      setTimeout(() => navigate('/m/tickets'), 1500)
+    } catch(err) {
+      alert("Error al cerrar el ticket")
+      console.error(err)
+    }
   }
 
   return (
-    <MobileLayout title={`Cerrar ${ticket.id}`} backTo="/m/tickets">
-      <div className="alert alert-warning" style={{ marginBottom: '1rem', fontSize: '0.75rem', padding: '0.5rem' }}>
-        <span className="icon">ℹ</span>
-        <div>Cierre mock - no persiste</div>
-      </div>
+    <MobileLayout title={`Cerrar ${ticket.ticketId.slice(0,8)}`} backTo="/m/tickets">
 
       <div className="card" style={{ marginBottom: '1rem', padding: '0.875rem' }}>
         <h4 style={{ fontSize: '0.95rem' }}>{ticket.titulo}</h4>
-        <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: '0.25rem' }}>{ticket.area}</p>
-        <p style={{ fontSize: '0.75rem', marginTop: '0.5rem' }}><span className={`badge ${ticket.prioridad}`}>{ticket.prioridad.toUpperCase()}</span></p>
+        <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: '0.25rem' }}>{ticket.descripcion}</p>
+        <p style={{ fontSize: '0.75rem', marginTop: '0.5rem' }}><span className={`badge ${ticket.prioridad ? ticket.prioridad.toLowerCase() : 'media'}`}>{ticket.prioridad ? ticket.prioridad.toUpperCase() : ''}</span></p>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -98,7 +117,7 @@ export default function MobileCierrePage() {
         {submitted && (
           <div className="alert alert-success" style={{ marginTop: '1rem' }}>
             <span className="icon">✓</span>
-            <div><strong>Ticket cerrado (mock).</strong></div>
+            <div><strong>Ticket cerrado correctamente.</strong></div>
           </div>
         )}
 
