@@ -13,6 +13,7 @@ Plataforma de gestión energética institucional con detección de anomalías, t
 | Node.js | 20+ | `winget install OpenJS.NodeJS.LTS` |
 | SQL Server | 2019+ | `winget install Microsoft.SQLServer.2022.Developer` |
 | SSMS | Última | `winget install Microsoft.SQLServerManagementStudio` |
+| Python | 3.10+ | Instalado para el microservicio de IA |
 
 > Después de instalar, cerrar y reabrir la terminal para actualizar el PATH.
 
@@ -21,6 +22,7 @@ Verificar:
 java --version
 mvn --version
 node --version
+python --version
 ```
 
 ---
@@ -54,16 +56,19 @@ Ejecutar `database/seeds.sql` después de `database/script.sql`. El script es id
 
 ---
 
-## 2. Backend
+## 2. Ejecutar los Microservicios
 
+El sistema consta de 3 partes que deben correr en simultáneo, cada una en una terminal distinta.
+
+### A. Backend Principal (Spring Boot / Java)
+Gestiona la base de datos, seguridad, usuarios y mantenimiento de tickets.
 ```bash
 cd backend
 mvn spring-boot:run
 ```
-
 Corre en `http://localhost:8080`.
 
-Variables de entorno (defaults para desarrollo local):
+**Variables de entorno** (defaults para desarrollo local):
 
 | Variable | Default | Descripción |
 |---|---|---|
@@ -74,33 +79,70 @@ Variables de entorno (defaults para desarrollo local):
 
 > **Nota:** `ddl-auto: none` está activo. Hibernate no valida ni modifica schema en el arranque — el DBA es la fuente de verdad.
 
----
+### B. Microservicio de IA (FastAPI / Python)
+Evalúa las lecturas de energía para detectar anomalías usando un modelo algorítmico y heurístico.
+```bash
+cd ai-service
+.\.venv\Scripts\Activate.ps1
+uvicorn main:app --host 0.0.0.0 --port 8090 --reload
+```
+Corre en `http://localhost:8090`.
 
-## 3. Frontend
-
+### C. Frontend (React / Vite)
+Interfaz de usuario de la plataforma.
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
 Corre en `http://localhost:5173`. Hace proxy de `/api` → `http://localhost:8080`.
+
+---
+
+## 3. Funcionamiento de la IA (Detección de Anomalías)
+
+La detección de anomalías se basa en comparar el **consumo real (kWh)** con un **consumo esperado (Línea base / Baseline)** que es dinámicamente ajustado por la Inteligencia Artificial.
+
+### ¿Qué variables analiza la IA?
+La IA toma el "consumo habitual" del medidor y lo multiplica por factores de corrección basados en la física y el comportamiento:
+1. **Hora del Día**: El consumo nocturno o de madrugada debe ser mucho más bajo (aplica un factor reductor del 0.65x). Durante horas pico (9 AM - 5 PM) permite un factor del 1.05x.
+2. **Día de la Semana**: Los fines de semana el consumo esperado se reduce al 80% (0.80x) respecto a un día laborable.
+3. **Factor de Potencia**: Si la eficiencia eléctrica del edificio cae por debajo de 0.80, la IA espera un consumo "falso" o de penalización mayor (1.08x).
+4. **Voltaje**: Variaciones de voltaje fuera de rango (200V-240V) aumentan ligeramente el consumo esperado por el estrés de los equipos (1.05x).
+
+### ¿Cómo determina si es una anomalía y su severidad?
+Compara la Lectura Real vs la Predicción Ajustada calculando un **porcentaje de desviación**. Si esa desviación supera la "tolerancia configurada" (por ej: 15%), se marca automáticamente como **ANOMALÍA**.
+
+La severidad se asigna en función de qué tanto se sobrepasó la tolerancia:
+- **CRÍTICA:** Desviación de 100% o más (El consumo es el doble de lo normal).
+- **ALTA:** Desviación mayor o igual al 50%.
+- **MEDIA:** Desviación mayor o igual al 25%.
+- **BAJA:** Desviación menor al 25% pero aún fuera del rango de tolerancia.
+
+---
+
+## 4. Módulo de Tickets de Mantenimiento
+
+El módulo permite conectar las anomalías detectadas con el equipo de soporte técnico.
+
+* **Administrador:** Inicia sesión con `admin@demo.edu` y puede convertir cualquier anomalía en un ticket de soporte. Asigna la prioridad, área afectada, el equipo y selecciona a qué **Técnico** disponible le delegará la tarea.
+* **Técnico:** Inicia sesión en su aplicación móvil (URL `/m/tickets`) con sus credenciales (ej: `juan.tecnico@demo.edu` / `Tecnico1234!`). Allí puede ver su lista de tickets asignados, los detalles del problema, y tiene la opción de cerrarlos tras escanear un QR del equipo intervenido.
 
 ---
 
 ## Credenciales de prueba
 
-| Campo | Valor |
-|---|---|
-| ID de Institución | `11111111-1111-1111-1111-111111111111` |
-| Email | `admin@demo.edu` |
-| Contraseña | `Admin1234!` |
+| Campo | Administrador | Técnico |
+|---|---|---|
+| ID de Institución | `11111111-1111-1111-1111-111111111111` | `11111111-1111-1111-1111-111111111111` |
+| Email | `admin@demo.edu` | `juan.tecnico@demo.edu` |
+| Contraseña | `Admin1234!` | `Tecnico1234!` |
 
 ---
 
 ## Estructura del proyecto
 
-```
+```text
 EnergiaClara-IA/
 ├── backend/                        # Spring Boot 3.2, Java 21
 │   └── src/main/java/com/energiaclara/
@@ -109,15 +151,15 @@ EnergiaClara-IA/
 │       ├── infrastructure/         # JPA/adapters ([iam], [consumo], [energiaops], [audit]), JWT, Spring Security
 │       ├── api/                    # REST controllers, DTOs externos, exception handler
 │       └── bootstrap/              # Main class
+├── ai-service/                     # FastAPI, Python 3.10+ (Microservicio de predicciones IA)
 ├── frontend/                       # React 18 + Vite
 │   └── src/
 │       ├── context/                # AuthContext (JWT en localStorage)
 │       ├── services/               # Axios + interceptor de token
 │       ├── components/             # ProtectedRoute
-│       └── pages/                  # LoginPage, DashboardPage
-├── database/
-│   └── script.sql                  # Schema canónico SQL Server (UTF-16 LE)
-└── Pantallas/                      # Mockups HTML estáticos (dashboard, lecturas, etc.)
+│       └── pages/                  # LoginPage, DashboardPage, CrearTicketPage, etc.
+├── database/                       # Scripts y Seeds de SQL Server
+└── Pantallas/                      # Mockups HTML estáticos
 ```
 
 ---
@@ -128,6 +170,8 @@ EnergiaClara-IA/
 |---|---|---|---|
 | POST | `/api/auth/login` | Público | Retorna JWT (auditado en `[audit].[evento_auditoria]`) |
 | POST | `/api/auth/register` | ADMIN_INSTITUCION | Crea usuario en el tenant (auditado) |
+| GET  | `/api/auth/users` | ADMIN_INSTITUCION | Lista usuarios por rol (ej: `?role=TECNICO`) |
+| POST | `/api/maintenance/tickets` | Autenticado | Crea un nuevo ticket de mantenimiento |
 | POST | `/api/energyops/analyze-reading` | Demo temporal (`permitAll`) | Persiste lectura en `[consumo].[lectura]`, detecta anomalía → `[energiaops].[anomalia]` |
 | GET  | `/api/analytics/dashboard` | Demo temporal (`permitAll`) | KPIs derivados de lecturas + anomalías + baseline activa |
 | GET  | `/api/analytics/kpis` | Demo temporal (`permitAll`) | KPIs por lectura (cálculo on-the-fly) |
