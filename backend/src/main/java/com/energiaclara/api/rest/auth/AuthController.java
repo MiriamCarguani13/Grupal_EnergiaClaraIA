@@ -27,10 +27,12 @@ public class AuthController {
 
     private final LoginUseCase loginUseCase;
     private final RegisterUserUseCase registerUserUseCase;
+    private final com.energiaclara.application.port.out.UserRepositoryPort userRepositoryPort;
 
-    public AuthController(LoginUseCase loginUseCase, RegisterUserUseCase registerUserUseCase) {
+    public AuthController(LoginUseCase loginUseCase, RegisterUserUseCase registerUserUseCase, com.energiaclara.application.port.out.UserRepositoryPort userRepositoryPort) {
         this.loginUseCase = loginUseCase;
         this.registerUserUseCase = registerUserUseCase;
+        this.userRepositoryPort = userRepositoryPort;
     }
 
     @PostMapping("/login")
@@ -63,5 +65,22 @@ public class AuthController {
         );
         String userId = registerUserUseCase.register(command);
         return ResponseEntity.ok(Map.of("userId", userId.toString()));
+    }
+
+    @org.springframework.web.bind.annotation.GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN_INSTITUCION')")
+    public ResponseEntity<java.util.List<Map<String, String>>> getUsersByRole(
+            @org.springframework.web.bind.annotation.RequestParam("role") String role,
+            @AuthenticationPrincipal AuthenticatedUser current) {
+        
+        java.util.List<com.energiaclara.domain.model.User> users = userRepositoryPort.findByRoleAndTenantId(role, com.energiaclara.domain.model.vo.TenantId.of(current.tenantId()));
+        
+        java.util.List<Map<String, String>> response = users.stream().map(u -> Map.of(
+                "id", u.getId().value().toString(),
+                "fullName", u.getFullName(),
+                "email", u.getEmail().value()
+        )).toList();
+        
+        return ResponseEntity.ok(response);
     }
 }

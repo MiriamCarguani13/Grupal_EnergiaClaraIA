@@ -71,6 +71,14 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         return userRepository.existsByEmailAndTenantId(email.value(), tenantId.value());
     }
 
+    @Override
+    public List<User> findByRoleAndTenantId(String roleName, TenantId tenantId) {
+        return userRepository.findByRoleNameAndTenantId(roleName, tenantId.value())
+                .stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
     private UserEntity toEntity(User user) {
         UserEntity entity = new UserEntity();
         entity.setId(user.getId().value());

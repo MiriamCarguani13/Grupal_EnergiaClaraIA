@@ -13,4 +13,6 @@ public interface UserRepositoryPort {
     Optional<User> findByEmailAndTenantId(Email email, TenantId tenantId);
 
     boolean existsByEmailAndTenantId(Email email, TenantId tenantId);
+
+    java.util.List<User> findByRoleAndTenantId(String roleName, TenantId tenantId);
 }
