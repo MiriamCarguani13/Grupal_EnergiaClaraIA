@@ -24,6 +24,8 @@ public record EnergyAnomalyRecord(
         BigDecimal estimatedCostImpact,
         BigDecimal estimatedCo2Impact,
         boolean iaUtilizada,
-        String estado
+        String estado,
+        Instant resolvedAt,
+        UUID resolvedBy
 ) {
 }

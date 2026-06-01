@@ -19,6 +19,9 @@ public record AnomalyResult(
         String explanation,
         String recommendation,
         BigDecimal estimatedCostImpact,
-        BigDecimal estimatedCo2Impact
+        BigDecimal estimatedCo2Impact,
+        String estado,
+        Instant resolvedAt,
+        UUID resolvedBy
 ) {
 }

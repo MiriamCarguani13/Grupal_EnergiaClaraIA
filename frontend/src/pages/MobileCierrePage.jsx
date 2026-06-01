@@ -56,6 +56,17 @@ export default function MobileCierrePage() {
     }
   }
 
+  if (ticket.estado === 'CERRADO') {
+    return (
+      <MobileLayout title={`Ticket ${ticket.ticketId.slice(0,8)}`} backTo="/m/tickets">
+        <div className="alert alert-success" style={{ marginTop: '1rem' }}>
+          <span className="icon">✓</span>
+          <div><strong>Este ticket ya ha sido cerrado.</strong></div>
+        </div>
+      </MobileLayout>
+    )
+  }
+
   return (
     <MobileLayout title={`Cerrar ${ticket.ticketId.slice(0,8)}`} backTo="/m/tickets">
 

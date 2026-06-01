@@ -49,8 +49,9 @@ public class EnergyAnomalyPersistenceAdapter implements SaveEnergyAnomalyPort, L
         entity.setRecommendation(record.recommendation());
         entity.setEstimatedCostImpact(record.estimatedCostImpact());
         entity.setEstimatedCo2Impact(record.estimatedCo2Impact());
-        entity.setIaUtilizada(record.iaUtilizada());
         entity.setEstado(toSqlStatus(record.estado()));
+        entity.setResolvedAt(record.resolvedAt());
+        entity.setResolvedBy(record.resolvedBy());
         return entity;
     }
 
@@ -72,7 +73,9 @@ public class EnergyAnomalyPersistenceAdapter implements SaveEnergyAnomalyPort, L
                 entity.getEstimatedCostImpact(),
                 entity.getEstimatedCo2Impact(),
                 entity.isIaUtilizada(),
-                entity.getEstado()
+                entity.getEstado(),
+                entity.getResolvedAt(),
+                entity.getResolvedBy()
         );
     }
 

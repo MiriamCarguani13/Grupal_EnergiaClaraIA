@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import AppLayout from '../components/AppLayout'
 import { fetchAnomalyById } from '../services/analyticsService'
+import { ticketService } from '../services/ticketService'
+
+import { useAuth } from '../context/AuthContext'
 
 const SEV_BADGE = { CRITICAL: 'critica', HIGH: 'alta', MEDIUM: 'media', LOW: 'baja' }
 const SEV_LABEL = { CRITICAL: 'Crítica', HIGH: 'Alta', MEDIUM: 'Media', LOW: 'Baja' }
@@ -9,19 +12,36 @@ const SEV_SCORE = { CRITICAL: 0.95, HIGH: 0.75, MEDIUM: 0.5, LOW: 0.25 }
 
 export default function AnomaliaDetallePage() {
   const { id } = useParams()
+  const { auth } = useAuth()
   const [anomaly, setAnomaly] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [techName, setTechName] = useState('Desconocido')
 
   useEffect(() => {
     fetchAnomalyById(id)
       .then((a) => {
-        if (!a) setError('Anomalía no encontrada')
-        else setAnomaly(a)
+        if (!a) {
+          setError('Anomalía no encontrada')
+          return
+        }
+        setAnomaly(a)
+        if (a.estado === 'RESUELTA' && a.resolvedBy) {
+          ticketService.getTechnicians().then(techs => {
+            const t = techs.find(x => x.id === a.resolvedBy)
+            if (t) {
+              setTechName(t.nombre)
+            } else if (auth?.userId === a.resolvedBy) {
+              setTechName(auth.nombre || auth.email || 'Admin')
+            } else {
+              setTechName(`Técnico (ID: ${a.resolvedBy.slice(0,8)})`)
+            }
+          }).catch(() => {})
+        }
       })
       .catch((err) => setError(err.response?.data?.message || 'Error cargando anomalía'))
       .finally(() => setLoading(false))
-  }, [id])
+  }, [id, auth])
 
   if (loading) return <AppLayout title="Anomalía - Detalle"><p>Cargando...</p></AppLayout>
   if (error) return <AppLayout title="Anomalía - Detalle"><div className="alert alert-danger">{error}</div></AppLayout>
@@ -31,6 +51,10 @@ export default function AnomaliaDetallePage() {
 
   return (
     <AppLayout title={`Anomalía ${anomaly.id.slice(0, 8)} - Detalle`}>
+      <div style={{ marginBottom: '1.25rem' }}>
+        <Link to="/anomalias" className="btn btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }}>← Volver al listado</Link>
+      </div>
+
       <div className={`alert ${anomaly.severity === 'CRITICAL' ? 'alert-danger' : 'alert-warning'}`} style={{ marginBottom: '1.25rem', padding: '1.25rem', borderRadius: 12 }}>
         <span className="icon" style={{ fontSize: '1.8rem' }}>🚨</span>
         <div style={{ flex: 1 }}>
@@ -83,13 +107,14 @@ export default function AnomaliaDetallePage() {
           </p>
         </div>
 
-        <div className="card">
-          <div className="card-title">Acciones</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <Link to={`/tickets/nuevo?anomalia=${anomaly.id}`} className="btn btn-primary btn-block">🔧 Convertir en Ticket</Link>
-            <Link to="/anomalias" className="btn btn-secondary btn-block">← Volver a listado</Link>
+        {anomaly.estado !== 'RESUELTA' && (
+          <div className="card">
+            <div className="card-title">Acciones</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <Link to={`/tickets/nuevo?anomalia=${anomaly.id}`} className="btn btn-primary btn-block">🔧 Convertir en Ticket</Link>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="card">
@@ -110,13 +135,25 @@ export default function AnomaliaDetallePage() {
             <div className="timeline-label">EN ACCIÓN</div>
             <div className="timeline-date">Pendiente</div>
           </div>
-          <div className="timeline-step">
+          <div className={`timeline-step ${anomaly.estado === 'RESUELTA' ? 'done' : ''}`}>
             <div className="timeline-dot" />
             <div className="timeline-label">RESUELTA</div>
-            <div className="timeline-date">Pendiente</div>
+            <div className="timeline-date">{anomaly.estado === 'RESUELTA' && anomaly.resolvedAt ? new Date(anomaly.resolvedAt).toLocaleString('es-BO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Pendiente'}</div>
           </div>
         </div>
       </div>
+
+      {anomaly.estado === 'RESUELTA' && (
+        <div className="card" style={{ marginTop: '1.25rem', borderLeft: '4px solid var(--green)' }}>
+          <div className="card-title">✓ Datos de Resolución</div>
+          <table>
+            <tbody>
+              <tr><td style={{ fontWeight: 600 }}>Fecha de cierre</td><td>{new Date(anomaly.resolvedAt).toLocaleString('es-BO')}</td></tr>
+              <tr><td style={{ fontWeight: 600 }}>Resuelto por</td><td>{techName}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      )}
     </AppLayout>
   )
 }

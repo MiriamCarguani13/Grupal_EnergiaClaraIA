@@ -22,7 +22,7 @@ public class AnalyticsDashboardPersistenceAdapter implements LoadAnalyticsDashbo
     public AnalyticsDashboardMetricsResult loadDashboardMetrics() {
         return new AnalyticsDashboardMetricsResult(
                 readingRepository.count(),
-                anomalyRepository.count()
+                anomalyRepository.countByEstadoNot("RESUELTA")
         );
     }
 }

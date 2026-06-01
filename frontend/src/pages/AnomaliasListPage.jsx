@@ -10,6 +10,7 @@ export default function AnomaliasListPage() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [activeTab, setActiveTab] = useState('activas')
 
   useEffect(() => {
     fetchAnomalies()
@@ -18,14 +19,53 @@ export default function AnomaliasListPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  const filteredItems = items.filter((a) => {
+    if (activeTab === 'activas') return a.estado !== 'RESUELTA'
+    return a.estado === 'RESUELTA'
+  })
+
   return (
     <AppLayout title="Anomalías - Listado">
       <div className="card">
-        <div className="card-title">Anomalías detectadas <span className="live-dot"></span></div>
+        <div className="card-title" style={{ marginBottom: '1rem' }}>Anomalías detectadas <span className="live-dot"></span></div>
+
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--gray-200)', paddingBottom: '0.5rem' }}>
+          <button
+            onClick={() => setActiveTab('activas')}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '0.9rem',
+              color: activeTab === 'activas' ? 'var(--green-dark)' : 'var(--gray-500)',
+              borderBottom: activeTab === 'activas' ? '2.5px solid var(--green-dark)' : 'none',
+              paddingBottom: '0.4rem',
+              cursor: 'pointer'
+            }}
+          >
+            🔍 Activas ({items.filter(a => a.estado !== 'RESUELTA').length})
+          </button>
+          <button
+            onClick={() => setActiveTab('resueltas')}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '0.9rem',
+              color: activeTab === 'resueltas' ? 'var(--green-dark)' : 'var(--gray-500)',
+              borderBottom: activeTab === 'resueltas' ? '2.5px solid var(--green-dark)' : 'none',
+              paddingBottom: '0.4rem',
+              cursor: 'pointer'
+            }}
+          >
+            ✓ Historial / Resueltas ({items.filter(a => a.estado === 'RESUELTA').length})
+          </button>
+        </div>
+
         {loading && <p>Cargando...</p>}
         {error && <div className="alert alert-danger">{error}</div>}
-        {!loading && items.length === 0 && <p style={{ color: 'var(--gray-500)' }}>Sin anomalías. ✓</p>}
-        {items.length > 0 && (
+        {!loading && filteredItems.length === 0 && <p style={{ color: 'var(--gray-500)' }}>Sin anomalías en esta sección. ✓</p>}
+        {filteredItems.length > 0 && (
           <table>
             <thead>
               <tr>
@@ -39,7 +79,7 @@ export default function AnomaliasListPage() {
               </tr>
             </thead>
             <tbody>
-              {items.map((a) => (
+              {filteredItems.map((a) => (
                 <tr key={a.id}>
                   <td>{new Date(a.measuredAt).toLocaleString('es-BO')}</td>
                   <td>{a.facilityId || '—'}</td>

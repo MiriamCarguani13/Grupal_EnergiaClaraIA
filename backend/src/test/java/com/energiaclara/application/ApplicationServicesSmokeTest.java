@@ -72,7 +72,9 @@ class ApplicationServicesSmokeTest {
                     anomaly.estimatedCostImpact(),
                     anomaly.estimatedCo2Impact(),
                     anomaly.iaUtilizada(),
-                    anomaly.estado()
+                    anomaly.estado(),
+                    anomaly.resolvedAt(),
+                    anomaly.resolvedBy()
             ))
             .withBean(LoadAnalyticsDashboardPort.class, () -> () -> new AnalyticsDashboardMetricsResult(0, 0))
             .withBean(LoadKpiSnapshotsPort.class, () -> List::of)

@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface EnergyAnomalyRepository extends JpaRepository<EnergyAnomalyEntity, UUID> {
     List<EnergyAnomalyEntity> findTop20ByOrderByMeasuredAtDesc();
+    long countByEstadoNot(String estado);
 }

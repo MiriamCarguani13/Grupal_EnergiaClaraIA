@@ -91,7 +91,10 @@ public class AnalyticsController {
                 result.explanation(),
                 result.recommendation(),
                 result.estimatedCostImpact(),
-                result.estimatedCo2Impact()
+                result.estimatedCo2Impact(),
+                result.estado(),
+                result.resolvedAt(),
+                result.resolvedBy()
         );
     }
 }

@@ -147,7 +147,10 @@ public class AnalyticsQueryService implements GetAnalyticsDashboardUseCase, GetK
                 entity.explanation(),
                 entity.recommendation(),
                 entity.estimatedCostImpact(),
-                entity.estimatedCo2Impact()
+                entity.estimatedCo2Impact(),
+                entity.estado(),
+                entity.resolvedAt(),
+                entity.resolvedBy()
         );
     }
 }

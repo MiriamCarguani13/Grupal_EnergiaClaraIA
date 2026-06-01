@@ -59,6 +59,12 @@ public class EnergyAnomalyEntity {
     @Column(name = "estado", nullable = false, length = 20)
     private String estado;
 
+    @Column(name = "resuelta_el")
+    private Instant resolvedAt;
+
+    @Column(name = "resuelta_por", columnDefinition = "uniqueidentifier")
+    private UUID resolvedBy;
+
     @Column(name = "detectada_el", nullable = false)
     private Instant measuredAt;
 

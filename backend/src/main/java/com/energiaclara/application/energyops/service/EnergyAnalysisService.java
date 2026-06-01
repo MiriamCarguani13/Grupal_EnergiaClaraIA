@@ -211,7 +211,9 @@ public class EnergyAnalysisService implements AnalyzeEnergyReadingUseCase {
                 estimatedCostImpact,
                 estimatedCo2Impact,
                 iaUtilizada,
-                "ABIERTA"
+                "ABIERTA",
+                null,
+                null
         );
     }
 }

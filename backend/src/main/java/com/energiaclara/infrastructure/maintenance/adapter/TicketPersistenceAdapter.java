@@ -18,10 +18,22 @@ public class TicketPersistenceAdapter implements TicketRepositoryPort {
 
     private final TicketJpaRepository ticketJpaRepository;
 
+    private final com.energiaclara.infrastructure.persistence.repository.EnergyAnomalyRepository anomalyRepository;
+
     @Override
     public Ticket save(Ticket ticket) {
         TicketEntity entity = toEntity(ticket);
         TicketEntity savedEntity = ticketJpaRepository.save(entity);
+        
+        if (ticket.getEstado() == TicketStatus.CERRADO && ticket.getAnomaliaId() != null) {
+            anomalyRepository.findById(ticket.getAnomaliaId()).ifPresent(anomaly -> {
+                anomaly.setEstado("RESUELTA");
+                anomaly.setResolvedAt(java.time.Instant.now());
+                anomaly.setResolvedBy(ticket.getCerradoPor() != null ? ticket.getCerradoPor() : ticket.getAsignadoA());
+                anomalyRepository.save(anomaly);
+            });
+        }
+        
         return toDomain(savedEntity);
     }
 

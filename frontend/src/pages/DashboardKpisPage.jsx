@@ -59,7 +59,7 @@ export default function DashboardKpisPage() {
   const totalKwh = (data.kpis || []).reduce((s, k) => s + parseFloat(k.kwh || 0), 0)
   const totalCost = (data.kpis || []).reduce((s, k) => s + parseFloat(k.estimatedCostImpact || 0), 0)
   const totalCo2 = (data.kpis || []).reduce((s, k) => s + parseFloat(k.estimatedCo2Impact || 0), 0)
-  const anomalies = data.anomalies || []
+  const anomalies = (data.anomalies || []).filter((a) => a.estado !== 'RESUELTA')
   const criticalCount = anomalies.filter((a) => a.severity === 'CRITICAL').length
 
   return (
