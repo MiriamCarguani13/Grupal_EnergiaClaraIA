@@ -1,0 +1,12 @@
+com/energiaclara/iam/application/dto/LoginResult.class
+com/energiaclara/iam/application/port/out/UserRepositoryPort.class
+com/energiaclara/iam/application/port/in/RegisterUserUseCase.class
+com/energiaclara/iam/application/port/in/LoginUseCase.class
+com/energiaclara/iam/application/dto/RegisterUserCommand.class
+com/energiaclara/iam/domain/model/vo/Email.class
+com/energiaclara/iam/domain/model/Role.class
+com/energiaclara/iam/application/dto/LoginCommand.class
+com/energiaclara/iam/application/port/out/TokenPort.class
+com/energiaclara/iam/domain/model/User.class
+com/energiaclara/iam/application/port/out/PasswordHasherPort.class
+com/energiaclara/iam/application/service/AuthApplicationService.class

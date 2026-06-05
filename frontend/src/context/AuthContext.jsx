@@ -2,11 +2,30 @@ import { createContext, useContext, useState, useCallback } from 'react'
 
 const AuthContext = createContext(null)
 
+function readStoredAuth() {
+  const stored = localStorage.getItem('ec_auth')
+  if (!stored) return null
+
+  try {
+    const parsed = JSON.parse(stored)
+    const valid =
+      parsed &&
+      typeof parsed.token === 'string' &&
+      parsed.token.trim() &&
+      Array.isArray(parsed.roles) &&
+      parsed.roles.length > 0
+
+    if (valid) return parsed
+  } catch {
+    // Ignore malformed persisted sessions and force a clean login.
+  }
+
+  localStorage.removeItem('ec_auth')
+  return null
+}
+
 export function AuthProvider({ children }) {
-  const [auth, setAuth] = useState(() => {
-    const stored = localStorage.getItem('ec_auth')
-    return stored ? JSON.parse(stored) : null
-  })
+  const [auth, setAuth] = useState(readStoredAuth)
 
   const login = useCallback((authData) => {
     localStorage.setItem('ec_auth', JSON.stringify(authData))

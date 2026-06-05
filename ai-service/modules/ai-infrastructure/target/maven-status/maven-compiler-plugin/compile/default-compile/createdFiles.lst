@@ -1,0 +1,3 @@
+com/energiaclara/ai/infrastructure/InMemoryEnergyHistoryProviderAdapter.class
+com/energiaclara/ai/infrastructure/DefaultEnergyAiEngineAdapter.class
+com/energiaclara/ai/infrastructure/ManualAiServiceFactory.class

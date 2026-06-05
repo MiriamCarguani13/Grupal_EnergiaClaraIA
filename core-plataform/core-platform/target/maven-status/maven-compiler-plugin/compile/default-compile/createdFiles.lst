@@ -1,0 +1,6 @@
+com/energiaclara/core/audit/AuditEvent$AuditStatus.class
+com/energiaclara/core/audit/AuditEvent.class
+com/energiaclara/core/security/AuthenticatedUser.class
+com/energiaclara/core/security/TenantContextHolder.class
+com/energiaclara/core/model/vo/UserId.class
+com/energiaclara/core/model/vo/TenantId.class

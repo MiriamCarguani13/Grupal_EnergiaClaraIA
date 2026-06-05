@@ -1,0 +1,6 @@
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-application/src/main/java/com/energiaclara/ai/application/AnalyzeEnergyWithAiService.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-application/src/main/java/com/energiaclara/ai/application/EnergyAiAnalysisCommand.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-application/src/main/java/com/energiaclara/ai/application/EnergyAiAnalysisResponse.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-application/src/main/java/com/energiaclara/ai/application/port/in/AnalyzeEnergyWithAiUseCase.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-application/src/main/java/com/energiaclara/ai/application/port/out/EnergyAiEnginePort.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-application/src/main/java/com/energiaclara/ai/application/port/out/EnergyHistoryProviderPort.java

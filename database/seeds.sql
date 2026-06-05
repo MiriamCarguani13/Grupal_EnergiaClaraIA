@@ -10,15 +10,28 @@ GO
 -- 1. Catálogo de roles (el backend mapea estos nombres a su enum)
 -- ────────────────────────────────────────────────────────────
 IF NOT EXISTS (SELECT 1 FROM [iam].[rol] WHERE nombre = 'ADMIN_INSTITUCION')
-BEGIN
-    INSERT INTO [iam].[rol] (rol_id, nombre, descripcion, nivel_alcance) VALUES
-      (NEWID(), 'ADMIN_INSTITUCION', 'Configurador global de la institución', 'INSTITUCION'),
-      (NEWID(), 'DIRECTOR',          'Supervisor de KPIs',                    'INSTITUCION'),
-      (NEWID(), 'DOCENTE',           'Gestor cultural / retos',               'EDIFICIO'),
-      (NEWID(), 'ESTUDIANTE',        'Participante operativo',                'EDIFICIO'),
-      (NEWID(), 'TECNICO',           'Ejecutor de mantenimiento',             'EDIFICIO'),
-      (NEWID(), 'AUDITOR',           'Validador de cumplimiento',             'INSTITUCION');
-END
+    INSERT INTO [iam].[rol] (rol_id, nombre, descripcion, nivel_alcance)
+    VALUES (NEWID(), 'ADMIN_INSTITUCION', 'Configurador global de la institución', 'INSTITUCION');
+
+IF NOT EXISTS (SELECT 1 FROM [iam].[rol] WHERE nombre = 'DIRECTOR')
+    INSERT INTO [iam].[rol] (rol_id, nombre, descripcion, nivel_alcance)
+    VALUES (NEWID(), 'DIRECTOR', 'Supervisor de KPIs', 'INSTITUCION');
+
+IF NOT EXISTS (SELECT 1 FROM [iam].[rol] WHERE nombre = 'DOCENTE')
+    INSERT INTO [iam].[rol] (rol_id, nombre, descripcion, nivel_alcance)
+    VALUES (NEWID(), 'DOCENTE', 'Gestor cultural / retos', 'EDIFICIO');
+
+IF NOT EXISTS (SELECT 1 FROM [iam].[rol] WHERE nombre = 'ESTUDIANTE')
+    INSERT INTO [iam].[rol] (rol_id, nombre, descripcion, nivel_alcance)
+    VALUES (NEWID(), 'ESTUDIANTE', 'Participante operativo', 'EDIFICIO');
+
+IF NOT EXISTS (SELECT 1 FROM [iam].[rol] WHERE nombre = 'TECNICO')
+    INSERT INTO [iam].[rol] (rol_id, nombre, descripcion, nivel_alcance)
+    VALUES (NEWID(), 'TECNICO', 'Ejecutor de mantenimiento', 'EDIFICIO');
+
+IF NOT EXISTS (SELECT 1 FROM [iam].[rol] WHERE nombre = 'AUDITOR')
+    INSERT INTO [iam].[rol] (rol_id, nombre, descripcion, nivel_alcance)
+    VALUES (NEWID(), 'AUDITOR', 'Validador de cumplimiento', 'INSTITUCION');
 GO
 
 -- ────────────────────────────────────────────────────────────
@@ -28,6 +41,7 @@ DECLARE @tenantId    UNIQUEIDENTIFIER = '11111111-1111-1111-1111-111111111111';
 DECLARE @edificioId  UNIQUEIDENTIFIER = '22222222-2222-2222-2222-222222222222';
 DECLARE @medidorId   UNIQUEIDENTIFIER = '33333333-3333-3333-3333-333333333333';
 DECLARE @adminId     UNIQUEIDENTIFIER = '44444444-4444-4444-4444-444444444444';
+DECLARE @tecnicoId   UNIQUEIDENTIFIER = '55555555-5555-5555-5555-555555555555';
 
 -- Tenant
 IF NOT EXISTS (SELECT 1 FROM [core].[inquilino] WHERE inquilino_id = @tenantId)
@@ -35,7 +49,7 @@ BEGIN
     INSERT INTO [core].[inquilino]
       (inquilino_id, nombre, nombre_legal, nit_rut, tipo_plan, factor_co2, codigo_moneda, esta_activo, creado_en, actualizado_en)
     VALUES
-      (@tenantId, 'Instituto Tecnológico Demo', 'Instituto Tecnológico Demo SA', '0000000000', 'FREEMIUM',
+      (@tenantId, 'Instituto Tecnológico Demo', 'Instituto Tecnológico Demo SA', '0000000000', 'BASIC',
        0.250000, 'BOB', 1, SYSUTCDATETIME(), SYSUTCDATETIME());
 END
 
@@ -55,6 +69,42 @@ BEGIN
     FROM [iam].[rol] WHERE nombre = 'ADMIN_INSTITUCION';
 END
 
+-- Tecnico demo para mantenimiento
+IF NOT EXISTS (SELECT 1 FROM [iam].[usuario] WHERE usuario_id = @tecnicoId)
+BEGIN
+    INSERT INTO [iam].[usuario]
+      (usuario_id, inquilino_id, correo, nombre_completo, contrasena_hash, esta_activo, creado_en, actualizado_en)
+    VALUES
+      (@tecnicoId, @tenantId, 'tecnico@demo.edu', 'Tecnico Demo',
+       '$2a$10$wXrY9v5V0cMmuCVib3xkv.QS7h.QSoGEthllvyVlDokZycgAGC6J2',
+       1, SYSUTCDATETIME(), SYSUTCDATETIME());
+END
+ELSE
+BEGIN
+    UPDATE [iam].[usuario]
+    SET inquilino_id = @tenantId,
+        correo = 'tecnico@demo.edu',
+        contrasena_hash = '$2a$10$wXrY9v5V0cMmuCVib3xkv.QS7h.QSoGEthllvyVlDokZycgAGC6J2',
+        esta_activo = 1,
+        actualizado_en = SYSUTCDATETIME()
+    WHERE usuario_id = @tecnicoId;
+END
+
+IF NOT EXISTS (
+    SELECT 1
+    FROM [iam].[usuario_rol] ur
+    INNER JOIN [iam].[rol] r ON r.rol_id = ur.rol_id
+    WHERE ur.usuario_id = @tecnicoId
+      AND ur.inquilino_id = @tenantId
+      AND r.nombre = 'TECNICO'
+)
+BEGIN
+    INSERT INTO [iam].[usuario_rol]
+      (usuario_rol_id, usuario_id, rol_id, inquilino_id, edificio_id, asignado_el, asignado_por)
+    SELECT NEWID(), @tecnicoId, rol_id, @tenantId, @edificioId, SYSUTCDATETIME(), @adminId
+    FROM [iam].[rol] WHERE nombre = 'TECNICO';
+END
+
 -- Edificio demo
 IF NOT EXISTS (SELECT 1 FROM [core].[edificio] WHERE edificio_id = @edificioId)
 BEGIN
@@ -70,7 +120,7 @@ BEGIN
     INSERT INTO [core].[medidor]
       (medidor_id, inquilino_id, edificio_id, codigo_medidor, tipo_medidor, unidad, descripcion_ubicacion, esta_activo, instalado_el, creado_en, actualizado_en)
     VALUES
-      (@medidorId, @tenantId, @edificioId, 'MED-DEMO-001', 'ELECTRICO', 'kWh', 'Tablero principal demo', 1,
+      (@medidorId, @tenantId, @edificioId, 'MED-DEMO-001', 'ELECTRICIDAD', 'kWh', 'Tablero principal demo', 1,
        CAST(SYSUTCDATETIME() AS DATE), SYSUTCDATETIME(), SYSUTCDATETIME());
 END
 GO
@@ -130,6 +180,54 @@ IF COL_LENGTH('audit.evento_auditoria', 'mensaje_error') IS NULL
     ALTER TABLE [audit].[evento_auditoria] ADD [mensaje_error] NVARCHAR(MAX) NULL;
 IF COL_LENGTH('audit.evento_auditoria', 'duracion_ms') IS NULL
     ALTER TABLE [audit].[evento_auditoria] ADD [duracion_ms] BIGINT NULL;
+GO
+
+-- [mantenimiento].[ticket]: ficha tecnica editable por rol TECNICO
+IF COL_LENGTH('mantenimiento.ticket', 'diagnostico_tecnico') IS NULL
+    ALTER TABLE [mantenimiento].[ticket] ADD [diagnostico_tecnico] NVARCHAR(MAX) NULL;
+IF COL_LENGTH('mantenimiento.ticket', 'solucion_aplicada') IS NULL
+    ALTER TABLE [mantenimiento].[ticket] ADD [solucion_aplicada] NVARCHAR(MAX) NULL;
+IF COL_LENGTH('mantenimiento.ticket', 'materiales_utilizados') IS NULL
+    ALTER TABLE [mantenimiento].[ticket] ADD [materiales_utilizados] NVARCHAR(MAX) NULL;
+IF COL_LENGTH('mantenimiento.ticket', 'observaciones_tecnicas') IS NULL
+    ALTER TABLE [mantenimiento].[ticket] ADD [observaciones_tecnicas] NVARCHAR(MAX) NULL;
+IF COL_LENGTH('mantenimiento.ticket', 'estado_tecnico') IS NULL
+    ALTER TABLE [mantenimiento].[ticket] ADD [estado_tecnico] NVARCHAR(30) NULL;
+IF COL_LENGTH('mantenimiento.ticket', 'atendido_el') IS NULL
+    ALTER TABLE [mantenimiento].[ticket] ADD [atendido_el] DATETIME2(3) NULL;
+IF COL_LENGTH('mantenimiento.ticket', 'tecnico_responsable_id') IS NULL
+    ALTER TABLE [mantenimiento].[ticket] ADD [tecnico_responsable_id] UNIQUEIDENTIFIER NULL;
+IF COL_LENGTH('mantenimiento.ticket', 'evidencia_imagen_url') IS NULL
+    ALTER TABLE [mantenimiento].[ticket] ADD [evidencia_imagen_url] NVARCHAR(1000) NULL;
+
+IF COL_LENGTH('energiaops.anomalia', 'ticket_id') IS NULL
+    ALTER TABLE [energiaops].[anomalia] ADD [ticket_id] UNIQUEIDENTIFIER NULL;
+IF COL_LENGTH('energiaops.anomalia', 'tecnico_responsable_id') IS NULL
+    ALTER TABLE [energiaops].[anomalia] ADD [tecnico_responsable_id] UNIQUEIDENTIFIER NULL;
+IF COL_LENGTH('energiaops.anomalia', 'tecnico_responsable_nombre') IS NULL
+    ALTER TABLE [energiaops].[anomalia] ADD [tecnico_responsable_nombre] NVARCHAR(200) NULL;
+
+IF EXISTS (
+    SELECT 1
+    FROM sys.check_constraints
+    WHERE name = 'chk_anomalia_estado'
+      AND parent_object_id = OBJECT_ID('energiaops.anomalia')
+)
+    ALTER TABLE [energiaops].[anomalia] DROP CONSTRAINT [chk_anomalia_estado];
+
+ALTER TABLE [energiaops].[anomalia] WITH CHECK ADD CONSTRAINT [chk_anomalia_estado]
+CHECK ([estado] IN ('DETECTADA', 'DERIVADA', 'EN_ATENCION', 'RESUELTA', 'IGNORADA', 'NOTIFICADA', 'EN_ACCION'));
+
+IF EXISTS (
+    SELECT 1
+    FROM sys.check_constraints
+    WHERE name = 'chk_ticket_estado'
+      AND parent_object_id = OBJECT_ID('mantenimiento.ticket')
+)
+    ALTER TABLE [mantenimiento].[ticket] DROP CONSTRAINT [chk_ticket_estado];
+
+ALTER TABLE [mantenimiento].[ticket] WITH CHECK ADD CONSTRAINT [chk_ticket_estado]
+CHECK ([estado] IN ('PENDIENTE', 'EN_PROGRESO', 'REPARADO', 'CERRADO', 'REABIERTO', 'ASIGNADO', 'ABIERTO', 'BORRADOR'));
 GO
 
 -- ────────────────────────────────────────────────────────────

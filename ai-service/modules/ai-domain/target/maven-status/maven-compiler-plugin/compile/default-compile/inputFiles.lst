@@ -1,0 +1,8 @@
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-domain/src/main/java/com/energiaclara/ai/domain/DynamicBaseline.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-domain/src/main/java/com/energiaclara/ai/domain/EnergyAiHistoricalReading.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-domain/src/main/java/com/energiaclara/ai/domain/EnergyAiInput.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-domain/src/main/java/com/energiaclara/ai/domain/EnergyAiResult.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-domain/src/main/java/com/energiaclara/ai/domain/ExplainableRecommendation.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-domain/src/main/java/com/energiaclara/ai/domain/HybridEnergyAiEngine.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-domain/src/main/java/com/energiaclara/ai/domain/HybridSeverity.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/ai-service/modules/ai-domain/src/main/java/com/energiaclara/ai/domain/StatisticalAnomalyScore.java

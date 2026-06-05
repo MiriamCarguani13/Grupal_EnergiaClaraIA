@@ -1,0 +1,6 @@
+com/energiaclara/ai/application/EnergyAiAnalysisResponse.class
+com/energiaclara/ai/application/port/out/EnergyAiEnginePort.class
+com/energiaclara/ai/application/EnergyAiAnalysisCommand.class
+com/energiaclara/ai/application/port/out/EnergyHistoryProviderPort.class
+com/energiaclara/ai/application/AnalyzeEnergyWithAiService.class
+com/energiaclara/ai/application/port/in/AnalyzeEnergyWithAiUseCase.class

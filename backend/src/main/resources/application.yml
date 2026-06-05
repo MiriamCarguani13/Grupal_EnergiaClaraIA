@@ -2,8 +2,8 @@ spring:
   datasource:
     url: ${DB_URL:jdbc:sqlserver://localhost:1433;databaseName=EnergiaClaraDB;encrypt=false;trustServerCertificate=true}
     username: ${DB_USERNAME:sa}
-    password: ${DB_PASSWORD:YourStrong!Passw0rd}
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    password: ${DB_PASSWORD:Energia2026!}
+    driver-class-name: ${DB_DRIVER:com.microsoft.sqlserver.jdbc.SQLServerDriver}
   jpa:
     hibernate:
       ddl-auto: none

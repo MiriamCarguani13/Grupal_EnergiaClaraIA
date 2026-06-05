@@ -7,7 +7,8 @@ export default function ProtectedRoute({ children, requiredRoles }) {
   if (!auth) return <Navigate to="/login" replace />
 
   if (requiredRoles && !requiredRoles.some((r) => auth.roles?.includes(r))) {
-    return <Navigate to="/dashboard" replace />
+    const fallback = auth.roles?.includes('TECNICO') ? '/m/tickets' : '/dashboard'
+    return <Navigate to={fallback} replace />
   }
 
   return children

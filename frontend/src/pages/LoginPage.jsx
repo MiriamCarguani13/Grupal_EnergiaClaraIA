@@ -7,7 +7,13 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const { login } = useAuth()
   const [form, setForm] = useState({ email: '', password: '', tenantId: '' })
-  const [error, setError] = useState('')
+  const [error, setError] = useState(() => {
+    const authError = sessionStorage.getItem('ec_auth_error')
+    if (authError) {
+      sessionStorage.removeItem('ec_auth_error')
+    }
+    return authError || ''
+  })
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e) =>
@@ -20,7 +26,7 @@ export default function LoginPage() {
     try {
       const data = await loginRequest(form)
       login(data)
-      navigate('/dashboard')
+      navigate(data.roles?.includes('TECNICO') ? '/m/tickets' : '/dashboard')
     } catch (err) {
       setError(err.response?.data?.message || 'Credenciales inválidas')
     } finally {

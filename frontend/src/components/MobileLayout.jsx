@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const TABS = [
   { to: '/m/tickets', icon: '🔧', label: 'Tickets' },
@@ -8,6 +9,12 @@ const TABS = [
 export default function MobileLayout({ title, headerRight, children, backTo }) {
   const navigate = useNavigate()
   const location = useLocation()
+  const { logout } = useAuth()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return (
     <div className="mobile-wrapper">
@@ -23,7 +30,9 @@ export default function MobileLayout({ title, headerRight, children, backTo }) {
             <span style={{ width: 36 }} />
           )}
           <h2>{title}</h2>
-          {headerRight || <span style={{ width: 36 }} />}
+          {headerRight || (
+            <button className="icon-btn" onClick={handleLogout} title="Cerrar sesión">Salir</button>
+          )}
         </header>
         <div className="mobile-content">{children}</div>
         <nav className="mobile-bottombar">

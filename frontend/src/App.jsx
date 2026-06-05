@@ -12,8 +12,12 @@ import MobileTicketsPage from './pages/MobileTicketsPage'
 import MobileCierrePage from './pages/MobileCierrePage'
 import MobileRetoPage from './pages/MobileRetoPage'
 
-function Protected({ children }) {
-  return <ProtectedRoute>{children}</ProtectedRoute>
+const ADMIN_ROLES = ['ADMIN_INSTITUCION']
+const OPS_ROLES = ['ADMIN_INSTITUCION', 'DIRECTOR', 'AUDITOR']
+const MAINTENANCE_ROLES = ['TECNICO']
+
+function Protected({ children, roles }) {
+  return <ProtectedRoute requiredRoles={roles}>{children}</ProtectedRoute>
 }
 
 export default function App() {
@@ -23,15 +27,15 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
 
-          <Route path="/dashboard" element={<Protected><DashboardKpisPage /></Protected>} />
-          <Route path="/lecturas" element={<Protected><RegistroLecturaPage /></Protected>} />
-          <Route path="/anomalias" element={<Protected><AnomaliasListPage /></Protected>} />
-          <Route path="/anomalias/:id" element={<Protected><AnomaliaDetallePage /></Protected>} />
-          <Route path="/tickets/nuevo" element={<Protected><CrearTicketPage /></Protected>} />
+          <Route path="/dashboard" element={<Protected roles={OPS_ROLES}><DashboardKpisPage /></Protected>} />
+          <Route path="/lecturas" element={<Protected roles={OPS_ROLES}><RegistroLecturaPage /></Protected>} />
+          <Route path="/anomalias" element={<Protected roles={OPS_ROLES}><AnomaliasListPage /></Protected>} />
+          <Route path="/anomalias/:id" element={<Protected roles={OPS_ROLES}><AnomaliaDetallePage /></Protected>} />
+          <Route path="/tickets/nuevo" element={<Protected roles={ADMIN_ROLES}><CrearTicketPage /></Protected>} />
           <Route path="/retos" element={<Protected><RetosRankingPage /></Protected>} />
 
-          <Route path="/m/tickets" element={<Protected><MobileTicketsPage /></Protected>} />
-          <Route path="/m/cierre/:id" element={<Protected><MobileCierrePage /></Protected>} />
+          <Route path="/m/tickets" element={<Protected roles={MAINTENANCE_ROLES}><MobileTicketsPage /></Protected>} />
+          <Route path="/m/cierre/:id" element={<Protected roles={MAINTENANCE_ROLES}><MobileCierrePage /></Protected>} />
           <Route path="/m/reto" element={<Protected><MobileRetoPage /></Protected>} />
 
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

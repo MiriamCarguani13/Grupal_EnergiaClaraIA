@@ -1,0 +1,10 @@
+com/energiaclara/ai/domain/EnergyAiResult.class
+com/energiaclara/ai/domain/HybridEnergyAiEngine.class
+com/energiaclara/ai/domain/EnergyAiInput.class
+com/energiaclara/ai/domain/StatisticalAnomalyScore.class
+com/energiaclara/ai/domain/DynamicBaseline$Source.class
+com/energiaclara/ai/domain/EnergyAiHistoricalReading.class
+com/energiaclara/ai/domain/HybridSeverity.class
+com/energiaclara/ai/domain/ExplainableRecommendation.class
+com/energiaclara/ai/domain/HybridEnergyAiEngine$1.class
+com/energiaclara/ai/domain/DynamicBaseline.class

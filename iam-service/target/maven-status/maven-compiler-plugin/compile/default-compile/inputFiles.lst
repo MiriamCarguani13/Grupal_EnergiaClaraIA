@@ -1,0 +1,12 @@
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/application/dto/LoginCommand.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/application/dto/LoginResult.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/application/dto/RegisterUserCommand.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/application/port/in/LoginUseCase.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/application/port/in/RegisterUserUseCase.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/application/port/out/PasswordHasherPort.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/application/port/out/TokenPort.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/application/port/out/UserRepositoryPort.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/application/service/AuthApplicationService.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/domain/model/Role.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/domain/model/User.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/iam-service/src/main/java/com/energiaclara/iam/domain/model/vo/Email.java

@@ -1,8 +1,8 @@
 package com.energiaclara.infrastructure.security;
 
-import com.energiaclara.application.port.out.TokenPort;
-import com.energiaclara.domain.model.Role;
-import com.energiaclara.domain.model.User;
+import com.energiaclara.iam.application.port.out.TokenPort;
+import com.energiaclara.iam.domain.model.Role;
+import com.energiaclara.iam.domain.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

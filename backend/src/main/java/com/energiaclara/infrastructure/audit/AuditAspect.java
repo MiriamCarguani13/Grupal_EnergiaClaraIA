@@ -2,12 +2,12 @@ package com.energiaclara.infrastructure.audit;
 
 import com.energiaclara.api.rest.audit.Audited;
 import com.energiaclara.application.port.out.AuditPort;
-import com.energiaclara.domain.model.audit.AuditEvent;
-import com.energiaclara.domain.model.audit.AuditEvent.AuditStatus;
-import com.energiaclara.domain.model.vo.TenantId;
-import com.energiaclara.domain.model.vo.UserId;
-import com.energiaclara.infrastructure.security.AuthenticatedUser;
-import com.energiaclara.infrastructure.security.TenantContextHolder;
+import com.energiaclara.core.security.AuthenticatedUser;
+import com.energiaclara.core.audit.AuditEvent;
+import com.energiaclara.core.audit.AuditEvent.AuditStatus;
+import com.energiaclara.core.model.vo.TenantId;
+import com.energiaclara.core.model.vo.UserId;
+import com.energiaclara.core.security.TenantContextHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;

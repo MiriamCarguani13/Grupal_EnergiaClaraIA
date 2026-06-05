@@ -11,10 +11,11 @@ const ROLE_LABELS = {
 }
 
 const NAV_ITEMS = [
-  { to: '/dashboard', icon: '📊', label: 'Dashboard' },
-  { to: '/lecturas', icon: '⚡', label: 'Lecturas' },
-  { to: '/anomalias', icon: '🔍', label: 'Anomalías' },
-  { to: '/tickets/nuevo', icon: '🔧', label: 'Tickets' },
+  { to: '/dashboard', icon: '📊', label: 'Dashboard', roles: ['ADMIN_INSTITUCION', 'DIRECTOR', 'AUDITOR'] },
+  { to: '/lecturas', icon: '⚡', label: 'Lecturas', roles: ['ADMIN_INSTITUCION', 'DIRECTOR', 'AUDITOR'] },
+  { to: '/anomalias', icon: '🔍', label: 'Anomalías', roles: ['ADMIN_INSTITUCION', 'DIRECTOR', 'AUDITOR'] },
+  { to: '/tickets/nuevo', icon: '🔧', label: 'Tickets', roles: ['ADMIN_INSTITUCION'] },
+  { to: '/m/tickets', icon: '🛠', label: 'Mis tickets', roles: ['TECNICO'] },
   { to: '/retos', icon: '🎯', label: 'Retos' },
 ]
 
@@ -36,7 +37,7 @@ export default function AppLayout({ title, children }) {
           <span>EnergíaClara AI</span>
         </div>
         <nav className="sidebar-nav">
-          {NAV_ITEMS.map((item) => (
+          {NAV_ITEMS.filter((item) => !item.roles || item.roles.some((role) => auth?.roles?.includes(role))).map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

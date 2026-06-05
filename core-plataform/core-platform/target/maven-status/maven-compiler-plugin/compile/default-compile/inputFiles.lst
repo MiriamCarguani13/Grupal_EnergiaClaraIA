@@ -1,0 +1,5 @@
+/Users/rivero/IdeaProjects/EnergiaClara-IA/core-plataform/core-platform/src/main/java/com/energiaclara/core/audit/AuditEvent.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/core-plataform/core-platform/src/main/java/com/energiaclara/core/model/vo/TenantId.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/core-plataform/core-platform/src/main/java/com/energiaclara/core/model/vo/UserId.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/core-plataform/core-platform/src/main/java/com/energiaclara/core/security/AuthenticatedUser.java
+/Users/rivero/IdeaProjects/EnergiaClara-IA/core-plataform/core-platform/src/main/java/com/energiaclara/core/security/TenantContextHolder.java
