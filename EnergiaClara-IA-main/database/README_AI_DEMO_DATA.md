@@ -9,8 +9,15 @@ No modifica arquitectura, IAM ni schema canónico.
 
 ## Archivos
 
+EnergyOps (IA híbrida):
 - `cleanup-energyops-ai-demo.sql` — borra lecturas/anomalías demo de EnergyOps+Analytics del tenant demo y medidor `MED-DEMO-001`. Conserva IAM, tenant, edificio, medidor, baseline y anomalías con ticket asociado (FKs de mantenimiento).
 - `seed-energyops-ai-demo.sql` — inserta 10 lecturas históricas normales para `MED-DEMO-001`.
+
+Mantenimiento (acceso TÉCNICO + ficha técnica):
+- `seed-technician-maintenance-demo.sql` — agrega columnas de ficha técnica a `mantenimiento.ticket`, amplía los CHECK de estado, y siembra técnico demo + SLA + 1 ticket.
+- `cleanup-maintenance-demo.sql` — borra solo los tickets demo (conserva lecturas, anomalías, baselines, KPIs e historial IA).
+
+> `database/seeds.sql` ya incluye **ambas** demos (sección 5 = historial IA, sección 6 = mantenimiento) en una sola corrida.
 
 ## IDs demo (fijos, definidos en `seeds.sql`)
 
@@ -20,6 +27,9 @@ No modifica arquitectura, IAM ni schema canónico.
 | edificio  | `22222222-2222-2222-2222-222222222222` |
 | **medidor** | `33333333-3333-3333-3333-333333333333` |
 | admin     | `44444444-4444-4444-4444-444444444444` |
+| técnico   | `55555555-5555-5555-5555-555555555555` (`tecnico@demo.edu`) |
+| SLA demo  | `66666666-6666-6666-6666-666666666666` |
+| ticket demo | `77777777-7777-7777-7777-777777777777` |
 
 Historial sembrado (`MED-DEMO-001`): `118, 122, 125, 130, 128, 134, 137, 140, 136, 142` kWh.
 
@@ -33,6 +43,10 @@ sqlcmd -S localhost,1433 -d EnergiaClaraDB  -U sa -P 'Energia2026!' -i database/
 # 2. (Opcional) re-sembrar solo el historial AI
 sqlcmd -S localhost,1433 -d EnergiaClaraDB  -U sa -P 'Energia2026!' -i database/cleanup-energyops-ai-demo.sql
 sqlcmd -S localhost,1433 -d EnergiaClaraDB  -U sa -P 'Energia2026!' -i database/seed-energyops-ai-demo.sql
+
+# 3. (Opcional) re-sembrar solo la demo de mantenimiento
+sqlcmd -S localhost,1433 -d EnergiaClaraDB  -U sa -P 'Energia2026!' -i database/cleanup-maintenance-demo.sql
+sqlcmd -S localhost,1433 -d EnergiaClaraDB  -U sa -P 'Energia2026!' -i database/seed-technician-maintenance-demo.sql
 ```
 
 ## Levantar backend
