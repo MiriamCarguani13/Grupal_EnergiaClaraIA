@@ -154,4 +154,51 @@ BEGIN
 END
 GO
 
+-- ────────────────────────────────────────────────────────────
+-- 5. Historial demo para la IA híbrida explicable (EnergyOps)
+--    10 lecturas normales de MED-DEMO-001 → el motor calcula
+--    promedio móvil + desviación estándar + Z-Score (baseline dinámico).
+--    La lectura anómala (270 kWh) NO se inserta: se prueba por API
+--    POST /api/energyops/analyze-reading. Idempotente (WHERE NOT EXISTS).
+-- ────────────────────────────────────────────────────────────
+DECLARE @tenantIdH   UNIQUEIDENTIFIER = '11111111-1111-1111-1111-111111111111';
+DECLARE @medidorIdH  UNIQUEIDENTIFIER = '33333333-3333-3333-3333-333333333333';
+DECLARE @adminIdH    UNIQUEIDENTIFIER = '44444444-4444-4444-4444-444444444444';
+DECLARE @facilityH   NVARCHAR(80)     = N'Sede Central - Bloque B - Aula 3B';
+
+DECLARE @readingsH TABLE (
+    periodo_inicio  DATETIME2(0)   NOT NULL PRIMARY KEY,
+    kwh             DECIMAL(18,4)  NOT NULL,
+    voltaje         DECIMAL(10,3)  NOT NULL,
+    factor_potencia DECIMAL(5,3)   NOT NULL
+);
+
+INSERT INTO @readingsH (periodo_inicio, kwh, voltaje, factor_potencia)
+VALUES
+    ('2026-06-03T08:00:00', 118.0000, 219.800, 0.950),
+    ('2026-06-03T09:00:00', 122.0000, 220.100, 0.951),
+    ('2026-06-03T10:00:00', 125.0000, 219.900, 0.949),
+    ('2026-06-03T11:00:00', 130.0000, 220.300, 0.952),
+    ('2026-06-03T12:00:00', 128.0000, 220.000, 0.950),
+    ('2026-06-03T13:00:00', 134.0000, 220.400, 0.948),
+    ('2026-06-03T14:00:00', 137.0000, 220.200, 0.951),
+    ('2026-06-03T15:00:00', 140.0000, 219.700, 0.949),
+    ('2026-06-03T16:00:00', 136.0000, 220.000, 0.950),
+    ('2026-06-03T17:00:00', 142.0000, 220.500, 0.952);
+
+INSERT INTO [consumo].[lectura]
+    (lectura_id, inquilino_id, medidor_id, valor, unidad, fecha_lectura,
+     periodo_inicio, periodo_fin, origen, estado, registrada_por, creado_en,
+     facility_label, meter_label, voltaje, factor_potencia)
+SELECT
+    NEWID(), @tenantIdH, @medidorIdH, r.kwh, N'kWh', CAST(r.periodo_inicio AS DATE),
+    r.periodo_inicio, DATEADD(HOUR, 1, r.periodo_inicio), N'API', N'VALIDADA', @adminIdH, SYSUTCDATETIME(),
+    @facilityH, N'MED-DEMO-001', r.voltaje, r.factor_potencia
+FROM @readingsH r
+WHERE NOT EXISTS (
+    SELECT 1 FROM [consumo].[lectura] l
+    WHERE l.medidor_id = @medidorIdH AND l.periodo_inicio = r.periodo_inicio
+);
+GO
+
 PRINT 'Seeds aplicados correctamente.';

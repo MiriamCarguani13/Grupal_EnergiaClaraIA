@@ -28,6 +28,16 @@
             <groupId>com.energiaclara</groupId>
             <artifactId>energiaclara-application</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.energiaclara</groupId>
+            <artifactId>ai-application</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.energiaclara</groupId>
+            <artifactId>ai-infrastructure</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
