@@ -71,24 +71,35 @@ mvn -pl energiaclara-infrastructure -am spring-boot:run
 }
 ```
 
-Respuesta esperada (`EnergyAiAnalysisResponse`) — con el historial demo, 270 kWh cae lejos
-del promedio móvil → Z-Score alto → `CRITICAL`:
+Respuesta esperada (`AnalyzeReadingResponseDto`) — con el historial demo, 270 kWh cae lejos
+del promedio móvil → Z-Score alto → `CRITICAL`. Si hay anomalía, **se persiste** en
+`energiaops.anomalia` y se devuelve su `anomalyId`:
 
 ```json
 {
-  "expectedKwh":      "135.29",
-  "baselineSource":   "HISTORY",
-  "sampleCount":      7,
-  "deviationPercent": "99.57",
-  "zScore":           "28.78",
-  "severity":         "CRITICAL",
-  "anomalyDetected":  true,
-  "fallback":         false,
-  "explanation":      "Se uso baseline dinamico calculado con 7 lecturas historicas. Lectura=270.00 kWh, esperado=135.29 kWh, desviacion=99.57%, zScore=28.78, severidad=CRITICAL.",
-  "recommendation":   "Escalar a mantenimiento y auditoria energetica para revision prioritaria.",
-  "modelVersion":     "hybrid-stat-rules-v1.0"
+  "anomalyId":       "<uuid generado>",
+  "anomalyDetected": true,
+  "analysis": {
+    "expectedKwh":      "135.29",
+    "baselineSource":   "HISTORY",
+    "sampleCount":      7,
+    "deviationPercent": "99.57",
+    "zScore":           "28.78",
+    "severity":         "CRITICAL",
+    "anomalyDetected":  true,
+    "fallback":         false,
+    "explanation":      "Se uso baseline dinamico calculado con 7 lecturas historicas. Lectura=270.00 kWh, esperado=135.29 kWh, desviacion=99.57%, zScore=28.78, severidad=CRITICAL.",
+    "recommendation":   "Escalar a mantenimiento y auditoria energetica para revision prioritaria.",
+    "modelVersion":     "hybrid-stat-rules-v1.0"
+  }
 }
 ```
 
 La frase de `explanation` con baseline dinámico, desviación y Z-Score es la evidencia de que
-EnergyOps consumió historial real vía la IA híbrida explicable.
+EnergyOps consumió historial real vía la IA híbrida explicable. La anomalía persistida queda
+visible en `GET /api/analytics/anomalies` y en `GET /api/analytics/dashboard`.
+
+> **Persistencia:** la anomalía se guarda con `ia_utilizada=1`, `version_modelo_ia`, `puntaje_score`,
+> `porcentaje_desviacion`, `explicacion`, `recomendacion`, `costo_estimado` y `co2_estimado`.
+> `severidad` se mapea a la del schema canónico (`CRITICA/ALTA/MEDIA/BAJA`), `estado='DETECTADA'`,
+> `tipo_anomalia='PICO'`, `lectura_id=NULL` (análisis directo sin lectura persistida).

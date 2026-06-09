@@ -7,6 +7,8 @@ import com.energiaclara.core.domain.shared.DomainException;
 import com.energiaclara.iam.domain.AuthenticatedPrincipal;
 import com.energiaclara.infrastructure.config.security.SecurityConfig;
 import com.energiaclara.infrastructure.energyops.api.dto.AnalyzeReadingRequestDto;
+import com.energiaclara.infrastructure.energyops.api.dto.AnalyzeReadingResponseDto;
+import com.energiaclara.infrastructure.energyops.persistence.adapter.EnergyOpsAnomalyWriter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,14 +40,16 @@ import java.util.UUID;
 public class EnergyOpsController {
 
     private final AnalyzeEnergyWithAiUseCase analyzeEnergyWithAi;
+    private final EnergyOpsAnomalyWriter anomalyWriter;
 
-    public EnergyOpsController(AnalyzeEnergyWithAiUseCase analyzeEnergyWithAi) {
+    public EnergyOpsController(AnalyzeEnergyWithAiUseCase analyzeEnergyWithAi, EnergyOpsAnomalyWriter anomalyWriter) {
         this.analyzeEnergyWithAi = analyzeEnergyWithAi;
+        this.anomalyWriter = anomalyWriter;
     }
 
     @PostMapping("/analyze-reading")
-    @Operation(summary = "Analizar lectura con motor AI híbrido (baseline dinámico + anomalía + recomendación)")
-    public ResponseEntity<EnergyAiAnalysisResponse> analyzeReading(@Valid @RequestBody AnalyzeReadingRequestDto req) {
+    @Operation(summary = "Analizar lectura con motor AI híbrido + persistir anomalía si se detecta")
+    public ResponseEntity<AnalyzeReadingResponseDto> analyzeReading(@Valid @RequestBody AnalyzeReadingRequestDto req) {
         UUID tenantId = currentTenantId();
         EnergyAiAnalysisCommand command = new EnergyAiAnalysisCommand(
                 tenantId,
@@ -61,7 +65,14 @@ public class EnergyOpsController {
                 null,                               // voltage
                 null                                // powerFactor
         );
-        return ResponseEntity.ok(analyzeEnergyWithAi.analyze(command));
+
+        EnergyAiAnalysisResponse analysis = analyzeEnergyWithAi.analyze(command);
+
+        UUID anomalyId = null;
+        if (analysis.anomalyDetected()) {
+            anomalyId = anomalyWriter.persistDetected(tenantId, req.meterId(), analysis);
+        }
+        return ResponseEntity.ok(new AnalyzeReadingResponseDto(anomalyId, analysis.anomalyDetected(), analysis));
     }
 
     @GetMapping("/anomalies")
