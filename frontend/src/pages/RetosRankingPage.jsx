@@ -4,12 +4,12 @@ import { mockReto, mockRanking } from '../services/mockService'
 export default function RetosRankingPage() {
   return (
     <AppLayout title="Gestión de Retos y Ranking">
-      <div className="alert alert-warning" style={{ marginBottom: '1rem' }}>
+      <div className="alert alert-info" style={{ marginBottom: '1rem' }}>
         <span className="icon">ℹ</span>
         <div>
-          <strong>Pantalla con mocks</strong>
+          <strong>Módulo de participación energética</strong>
           <p style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>
-            Módulo de retos aún no expone REST. Tablas en DB: <code>educacion.reto</code>, <code>educacion.snapshot_ranking</code>.
+            Seguimiento de retos, participación institucional y ranking de ahorro energético.
           </p>
         </div>
       </div>

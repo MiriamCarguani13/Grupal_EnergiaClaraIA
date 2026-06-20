@@ -28,11 +28,14 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
 
           <Route path="/dashboard" element={<Protected roles={OPS_ROLES}><DashboardKpisPage /></Protected>} />
+          <Route path="/analytics" element={<Protected roles={OPS_ROLES}><DashboardKpisPage /></Protected>} />
           <Route path="/lecturas" element={<Protected roles={OPS_ROLES}><RegistroLecturaPage /></Protected>} />
           <Route path="/anomalias" element={<Protected roles={OPS_ROLES}><AnomaliasListPage /></Protected>} />
           <Route path="/anomalias/:id" element={<Protected roles={OPS_ROLES}><AnomaliaDetallePage /></Protected>} />
           <Route path="/tickets/nuevo" element={<Protected roles={ADMIN_ROLES}><CrearTicketPage /></Protected>} />
+          <Route path="/mantenimiento" element={<Protected roles={ADMIN_ROLES}><CrearTicketPage /></Protected>} />
           <Route path="/retos" element={<Protected><RetosRankingPage /></Protected>} />
+          <Route path="/administracion" element={<Protected><RetosRankingPage /></Protected>} />
 
           <Route path="/m/tickets" element={<Protected roles={MAINTENANCE_ROLES}><MobileTicketsPage /></Protected>} />
           <Route path="/m/cierre/:id" element={<Protected roles={MAINTENANCE_ROLES}><MobileCierrePage /></Protected>} />

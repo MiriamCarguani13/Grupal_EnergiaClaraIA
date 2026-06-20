@@ -2,6 +2,7 @@ package com.energiaclara.infrastructure.persistence.adapter;
 
 import com.energiaclara.application.port.out.LoadKpiSnapshotsPort;
 import com.energiaclara.application.energyops.dto.EnergyReadingRecord;
+import com.energiaclara.application.port.out.LoadEnergyReadingsPort;
 import com.energiaclara.application.port.out.SaveEnergyReadingPort;
 import com.energiaclara.infrastructure.persistence.entity.EnergyReadingEntity;
 import com.energiaclara.infrastructure.persistence.repository.EnergyReadingRepository;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class EnergyReadingPersistenceAdapter implements SaveEnergyReadingPort, LoadKpiSnapshotsPort {
+public class EnergyReadingPersistenceAdapter implements SaveEnergyReadingPort, LoadKpiSnapshotsPort, LoadEnergyReadingsPort {
 
     private final EnergyReadingRepository readingRepository;
 
@@ -26,6 +27,13 @@ public class EnergyReadingPersistenceAdapter implements SaveEnergyReadingPort, L
     @Override
     public List<EnergyReadingRecord> loadRecentReadings() {
         return readingRepository.findTop20ByOrderByMeasuredAtDesc().stream()
+                .map(this::toRecord)
+                .toList();
+    }
+
+    @Override
+    public List<EnergyReadingRecord> loadRecentEnergyReadings() {
+        return readingRepository.findTop50ByOrderByMeasuredAtDesc().stream()
                 .map(this::toRecord)
                 .toList();
     }

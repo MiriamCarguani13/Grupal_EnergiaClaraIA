@@ -1,22 +1,86 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import AppLayout from '../components/AppLayout'
 import { fetchAnomalyById } from '../services/analyticsService'
 
 const SEV_BADGE = { CRITICAL: 'critica', HIGH: 'alta', MEDIUM: 'media', LOW: 'baja' }
 const SEV_LABEL = { CRITICAL: 'Crítica', HIGH: 'Alta', MEDIUM: 'Media', LOW: 'Baja' }
-const SEV_SCORE = { CRITICAL: 0.95, HIGH: 0.75, MEDIUM: 0.5, LOW: 0.25 }
 const READ_ONLY_STATUSES = ['DERIVADA', 'EN_ATENCION', 'RESUELTA']
 const BASELINE_LABEL = {
   HISTORY: 'Baseline dinámico',
   STATIC_BASELINE: 'Baseline fijo',
-  INPUT_AS_EXPECTED: 'Lectura actual como referencia'
+  INPUT_AS_EXPECTED: 'Lectura actual como referencia',
 }
+const STATUS_LABEL = {
+  DETECTADA: 'Detectada',
+  DERIVADA: 'Derivada',
+  EN_ATENCION: 'En atención',
+  RESUELTA: 'Resuelta',
+}
+const FLOW_STEPS = [
+  { id: 'LECTURA', label: 'Lectura registrada' },
+  { id: 'AI', label: 'Análisis IA' },
+  { id: 'DETECTADA', label: 'Anomalía detectada' },
+  { id: 'DERIVADA', label: 'Derivación a mantenimiento' },
+  { id: 'RESUELTA', label: 'Resolución' },
+]
 
 function formatAiNumber(value, decimals = 2) {
-  if (value === null || value === undefined || value === '') return '—'
+  if (value === null || value === undefined || value === '') return 'No disponible'
   const numeric = Number(value)
   return Number.isFinite(numeric) ? numeric.toFixed(decimals) : value
+}
+
+function formatDate(value) {
+  if (!value) return 'No disponible'
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? 'No disponible' : date.toLocaleString('es-BO')
+}
+
+function estimateRegisteredKwh(anomaly) {
+  const baseline = Number(anomaly.expectedKwh)
+  const deviation = Number(anomaly.deviationPercent)
+  if (!Number.isFinite(baseline) || !Number.isFinite(deviation)) return null
+  return baseline * (1 + deviation / 100)
+}
+
+function normalizeStatus(status) {
+  return status || 'DETECTADA'
+}
+
+function DetailMetric({ label, value, highlight }) {
+  return (
+    <div className={highlight ? 'detail-metric highlight' : 'detail-metric'}>
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  )
+}
+
+function FlowTimeline({ status, measuredAt }) {
+  const normalized = normalizeStatus(status)
+  const activeIndex = normalized === 'RESUELTA'
+    ? 4
+    : normalized === 'DERIVADA' || normalized === 'EN_ATENCION'
+      ? 3
+      : 2
+
+  return (
+    <div className="anomaly-flow">
+      {FLOW_STEPS.map((step, index) => (
+        <div
+          key={step.id}
+          className={`anomaly-flow-step ${index <= activeIndex ? 'done' : ''} ${index === activeIndex ? 'active' : ''}`}
+        >
+          <div className="anomaly-flow-dot" />
+          <div>
+            <strong>{step.label}</strong>
+            <span>{index === 0 ? formatDate(measuredAt) : index <= activeIndex ? 'Completado' : 'Pendiente'}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 export default function AnomaliaDetallePage() {
@@ -35,148 +99,162 @@ export default function AnomaliaDetallePage() {
       .finally(() => setLoading(false))
   }, [id])
 
+  const derived = useMemo(() => {
+    if (!anomaly) return null
+    const status = normalizeStatus(anomaly.status)
+    const registeredKwh = estimateRegisteredKwh(anomaly)
+    const baselineLabel = BASELINE_LABEL[anomaly.baselineSource] || anomaly.baselineSource || 'No disponible'
+    const usesHybridAi = Boolean(
+      anomaly.modelVersion ||
+      anomaly.baselineSource === 'HISTORY' ||
+      anomaly.zScore !== null && anomaly.zScore !== undefined ||
+      anomaly.sampleCount !== null && anomaly.sampleCount !== undefined ||
+      /ia hibrida|baseline dinam/i.test(anomaly.explanation || '')
+    )
+    return {
+      status,
+      registeredKwh,
+      baselineLabel,
+      usesHybridAi,
+      isReadOnly: READ_ONLY_STATUSES.includes(status),
+    }
+  }, [anomaly])
+
   if (loading) return <AppLayout title="Anomalía - Detalle"><p>Cargando...</p></AppLayout>
   if (error) return <AppLayout title="Anomalía - Detalle"><div className="alert alert-danger">{error}</div></AppLayout>
 
-  const score = SEV_SCORE[anomaly.severity] || 0.5
-  const scorePct = Math.round(score * 100)
-  const isReadOnly = READ_ONLY_STATUSES.includes(anomaly.status)
-  const baselineLabel = BASELINE_LABEL[anomaly.baselineSource] || anomaly.baselineSource || '—'
-  const usesHybridAi = Boolean(
-    anomaly.modelVersion ||
-    anomaly.baselineSource === 'HISTORY' ||
-    anomaly.zScore !== null && anomaly.zScore !== undefined ||
-    anomaly.sampleCount !== null && anomaly.sampleCount !== undefined ||
-    /ia hibrida|baseline dinam/i.test(anomaly.explanation || '')
-  )
-
   return (
     <AppLayout title={`Anomalía ${anomaly.id.slice(0, 8)} - Detalle`}>
-      <div className={`alert ${anomaly.severity === 'CRITICAL' ? 'alert-danger' : 'alert-warning'}`} style={{ marginBottom: '1.25rem', padding: '1.25rem', borderRadius: 12 }}>
-        <span className="icon" style={{ fontSize: '1.8rem' }}>🚨</span>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <span className={`badge ${SEV_BADGE[anomaly.severity] || 'media'}`}>{SEV_LABEL[anomaly.severity]}</span>
-            <strong style={{ fontSize: '1.1rem' }}>{anomaly.type} · {anomaly.facilityId || 'Sin área'}</strong>
-          </div>
-          <p style={{ fontSize: '0.85rem' }}>
-            Detectado: <strong>{new Date(anomaly.measuredAt).toLocaleString('es-BO')}</strong> · Medidor: {anomaly.meterId || '—'}
-          </p>
+      <section className="page-hero compact anomaly-detail-hero">
+        <div>
+          <span className="section-kicker">Detalle de evento energético</span>
+          <h1>Anomalía {anomaly.id.slice(0, 8)}</h1>
+          <p>{anomaly.type || 'Desviación energética'} · {anomaly.facilityId || 'Área no registrada'}</p>
         </div>
-      </div>
+        <div className="anomaly-detail-hero-badges">
+          <span className={`badge ${SEV_BADGE[anomaly.severity] || 'media'}`}>{SEV_LABEL[anomaly.severity] || anomaly.severity || 'Media'}</span>
+          <span className={`status-badge status-${derived.status.toLowerCase()}`}>{STATUS_LABEL[derived.status] || derived.status}</span>
+        </div>
+      </section>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
-        <div className="card">
-          <div className="card-title">Score de Anomalía</div>
-          <div style={{ textAlign: 'center', padding: '1rem 0' }}>
-            <div className="score-value">{score.toFixed(2)}</div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginTop: '0.25rem' }}>Score IA (0 - 1)</p>
-          </div>
-          <div className="score-bar"><div className="score-fill" style={{ width: `${scorePct}%` }} /></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.7rem', color: 'var(--gray-500)' }}>
-            <span>Normal</span><span>Crítico</span>
+      <section className="control-card anomaly-detail-section">
+        <div className="control-card-header">
+          <div>
+            <span className="section-kicker">Sección 1</span>
+            <h2>Resumen de anomalía</h2>
           </div>
         </div>
-
-        <div className="card">
-          <div className="card-title">Datos de Consumo</div>
-          <table>
-            <tbody>
-              <tr><td style={{ fontWeight: 600 }}>Desviación</td><td><strong style={{ color: 'var(--red)' }}>+{anomaly.deviationPercent}%</strong> vs baseline</td></tr>
-              <tr><td style={{ fontWeight: 600 }}>Tipo</td><td>{anomaly.type}</td></tr>
-              <tr><td style={{ fontWeight: 600 }}>Severidad</td><td>{SEV_LABEL[anomaly.severity]}</td></tr>
-              <tr><td style={{ fontWeight: 600 }}>Costo estimado</td><td><strong>Bs. {anomaly.estimatedCostImpact ?? '—'}</strong></td></tr>
-              <tr><td style={{ fontWeight: 600 }}>CO₂ estimado</td><td><strong>{anomaly.estimatedCo2Impact ?? '—'} kg</strong></td></tr>
-              <tr><td style={{ fontWeight: 600 }}>Lectura origen</td><td><code>{anomaly.readingId}</code></td></tr>
-              <tr><td style={{ fontWeight: 600 }}>Estado</td><td><span className="badge info">{anomaly.status || 'DETECTADA'}</span></td></tr>
-              {anomaly.ticketId && <tr><td style={{ fontWeight: 600 }}>Ticket asociado</td><td><code>{anomaly.ticketId}</code></td></tr>}
-              {anomaly.responsibleTechnicianName && <tr><td style={{ fontWeight: 600 }}>Técnico</td><td>{anomaly.responsibleTechnicianName}</td></tr>}
-              {anomaly.resolvedAt && <tr><td style={{ fontWeight: 600 }}>Resuelta</td><td>{new Date(anomaly.resolvedAt).toLocaleString('es-BO')}</td></tr>}
-            </tbody>
-          </table>
+        <div className="detail-metric-grid">
+          <DetailMetric label="Medidor" value={anomaly.meterId || 'No disponible'} />
+          <DetailMetric label="Estado" value={STATUS_LABEL[derived.status] || derived.status} />
+          <DetailMetric label="Severidad" value={SEV_LABEL[anomaly.severity] || anomaly.severity || 'No disponible'} />
+          <DetailMetric label="Fecha" value={formatDate(anomaly.measuredAt)} />
+          <DetailMetric label="Consumo registrado" value={`${formatAiNumber(derived.registeredKwh)} kWh`} highlight />
+          <DetailMetric label="Baseline esperado" value={`${formatAiNumber(anomaly.expectedKwh)} kWh`} />
+          <DetailMetric label="Desviación" value={`${formatAiNumber(anomaly.deviationPercent)}%`} />
         </div>
-      </div>
+      </section>
 
-      <div className="card" style={{ marginBottom: '1.25rem', borderLeft: '4px solid var(--blue)' }}>
-        <div className="card-title">Evidencia IA híbrida explicable</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(155px, 1fr))', gap: '0.85rem' }}>
-          <div style={{ padding: '0.85rem', border: '1px solid var(--gray-200)', borderRadius: 8 }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--gray-500)', fontWeight: 700, textTransform: 'uppercase' }}>IA híbrida utilizada</div>
-            <div style={{ fontSize: '1rem', fontWeight: 700, marginTop: '0.25rem' }}>{usesHybridAi ? 'Sí' : 'No'}</div>
+      <section className="ai-explainability-panel anomaly-detail-section">
+        <div className="ai-explainability-header">
+          <div>
+            <span className="section-kicker">Sección 2</span>
+            <h2>Explicabilidad IA</h2>
+            <p>Evidencia calculada para explicar por qué la lectura salió del comportamiento esperado.</p>
           </div>
-          <div style={{ padding: '0.85rem', border: '1px solid var(--gray-200)', borderRadius: 8 }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--gray-500)', fontWeight: 700, textTransform: 'uppercase' }}>Baseline dinámico</div>
-            <div style={{ fontSize: '1rem', fontWeight: 700, marginTop: '0.25rem' }}>{formatAiNumber(anomaly.expectedKwh)} kWh</div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: '0.15rem' }}>{baselineLabel}</div>
-          </div>
-          <div style={{ padding: '0.85rem', border: '1px solid var(--gray-200)', borderRadius: 8 }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--gray-500)', fontWeight: 700, textTransform: 'uppercase' }}>Historial analizado</div>
-            <div style={{ fontSize: '1rem', fontWeight: 700, marginTop: '0.25rem' }}>{anomaly.sampleCount ?? '—'} lecturas</div>
-          </div>
-          <div style={{ padding: '0.85rem', border: '1px solid var(--gray-200)', borderRadius: 8 }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--gray-500)', fontWeight: 700, textTransform: 'uppercase' }}>Z-Score</div>
-            <div style={{ fontSize: '1rem', fontWeight: 700, marginTop: '0.25rem' }}>{formatAiNumber(anomaly.zScore)}</div>
-          </div>
-          <div style={{ padding: '0.85rem', border: '1px solid var(--gray-200)', borderRadius: 8 }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--gray-500)', fontWeight: 700, textTransform: 'uppercase' }}>Confianza</div>
-            <div style={{ fontSize: '1rem', fontWeight: 700, marginTop: '0.25rem' }}>{formatAiNumber(anomaly.confidence)}</div>
-          </div>
-          <div style={{ padding: '0.85rem', border: '1px solid var(--gray-200)', borderRadius: 8 }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--gray-500)', fontWeight: 700, textTransform: 'uppercase' }}>Versión modelo</div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 700, marginTop: '0.25rem', wordBreak: 'break-word' }}>{anomaly.modelVersion || '—'}</div>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
-        <div className="card" style={{ borderLeft: '4px solid var(--purple)' }}>
-          <div className="card-title"><span className="ai-tag">🤖 Recomendación</span></div>
-          <p style={{ fontSize: '0.9rem', marginBottom: '1rem', lineHeight: 1.5 }}>
-            <strong>Explicación:</strong> {anomaly.explanation || 'Sin explicación.'}
-          </p>
-          <p style={{ fontSize: '0.9rem', lineHeight: 1.5 }}>
-            <strong>Acción sugerida:</strong> {anomaly.recommendation || 'Sin recomendación.'}
-          </p>
+          <span className="ai-used-pill">{derived.usesHybridAi ? 'IA híbrida utilizada' : 'Fallback determinístico'}</span>
         </div>
 
-        <div className="card">
-          <div className="card-title">Acciones</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {isReadOnly ? (
-              <div className="alert alert-info">Anomalía en modo lectura. Ya fue derivada, está en atención o fue resuelta.</div>
+        <div className="ai-evidence-grid">
+          <div className="ai-evidence-card highlight">
+            <span>Modelo usado</span>
+            <strong>{anomaly.modelVersion || 'No disponible'}</strong>
+          </div>
+          <div className="ai-evidence-card">
+            <span>Confidence</span>
+            <strong>{formatAiNumber(anomaly.confidence)}</strong>
+          </div>
+          <div className="ai-evidence-card">
+            <span>Z-score</span>
+            <strong>{formatAiNumber(anomaly.zScore)}</strong>
+          </div>
+          <div className="ai-evidence-card">
+            <span>Score de anomalía</span>
+            <strong>{formatAiNumber(anomaly.anomalyScore ?? anomaly.confidence)}</strong>
+          </div>
+          <div className="ai-evidence-card">
+            <span>Muestras históricas</span>
+            <strong>{anomaly.sampleCount ?? 'No disponible'}</strong>
+          </div>
+          <div className="ai-evidence-card">
+            <span>Tipo de baseline</span>
+            <strong>{derived.baselineLabel}</strong>
+          </div>
+        </div>
+
+        <div className="ai-explanation-copy single">
+          <div>
+            <h3>Explicación generada</h3>
+            <p>{anomaly.explanation || 'No disponible'}</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="control-card anomaly-detail-section">
+        <div className="control-card-header">
+          <div>
+            <span className="section-kicker">Sección 3</span>
+            <h2>Recomendación</h2>
+          </div>
+        </div>
+        <div className="recommendation-layout">
+          <div className="recommendation-main">
+            <span>Acción sugerida</span>
+            <p>{anomaly.recommendation || 'No disponible'}</p>
+          </div>
+          <div className="recommendation-impact-grid">
+            <DetailMetric label="Impacto estimado" value={`${formatAiNumber(anomaly.estimatedEnergyImpact ?? anomaly.energyImpactKwh)} kWh`} />
+            <DetailMetric label="Costo estimado" value={`Bs. ${formatAiNumber(anomaly.estimatedCostImpact)}`} />
+            <DetailMetric label="CO2 estimado" value={`${formatAiNumber(anomaly.estimatedCo2Impact)} kg`} />
+          </div>
+        </div>
+      </section>
+
+      <section className="control-card anomaly-detail-section">
+        <div className="control-card-header">
+          <div>
+            <span className="section-kicker">Sección 4</span>
+            <h2>Flujo operativo</h2>
+          </div>
+        </div>
+        <FlowTimeline status={derived.status} measuredAt={anomaly.measuredAt} />
+      </section>
+
+      <section className="control-card anomaly-detail-section">
+        <div className="control-card-header">
+          <div>
+            <span className="section-kicker">Sección 5</span>
+            <h2>Mantenimiento</h2>
+          </div>
+        </div>
+        <div className="maintenance-panel">
+          <div>
+            <span className="anomaly-card-label">Ticket asociado</span>
+            <strong>{anomaly.ticketId ? anomaly.ticketId : 'No disponible'}</strong>
+            <p>Estado del ticket: {anomaly.ticketStatus || (anomaly.ticketId ? 'Derivado' : 'No disponible')}</p>
+            {anomaly.responsibleTechnicianName && <p>Técnico responsable: {anomaly.responsibleTechnicianName}</p>}
+            {anomaly.resolvedAt && <p>Fecha de resolución: {formatDate(anomaly.resolvedAt)}</p>}
+          </div>
+          <div className="maintenance-actions">
+            {derived.isReadOnly ? (
+              <span className="readonly-pill">Derivación no disponible para este estado</span>
             ) : (
-              <Link to={`/tickets/nuevo?anomalia=${anomaly.id}`} className="btn btn-primary btn-block">🔧 Convertir en Ticket</Link>
+              <Link to={`/tickets/nuevo?anomalia=${anomaly.id}`} className="btn btn-primary">Derivar a mantenimiento</Link>
             )}
-            <Link to="/anomalias" className="btn btn-secondary btn-block">← Volver a listado</Link>
+            <Link to="/anomalias" className="btn btn-secondary">Volver a anomalías</Link>
           </div>
         </div>
-      </div>
-
-      <div className="card">
-        <div className="card-title">Línea de tiempo</div>
-        <div className="timeline">
-          <div className="timeline-step done">
-            <div className="timeline-dot" />
-            <div className="timeline-label">DETECTADA</div>
-            <div className="timeline-date">{new Date(anomaly.measuredAt).toLocaleString('es-BO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
-          </div>
-          <div className="timeline-step active">
-            <div className="timeline-dot" />
-            <div className="timeline-label">NOTIFICADA</div>
-            <div className="timeline-date">Auto</div>
-          </div>
-          <div className="timeline-step">
-            <div className="timeline-dot" />
-            <div className="timeline-label">EN ACCIÓN</div>
-            <div className="timeline-date">Pendiente</div>
-          </div>
-          <div className="timeline-step">
-            <div className="timeline-dot" />
-            <div className="timeline-label">RESUELTA</div>
-            <div className="timeline-date">Pendiente</div>
-          </div>
-        </div>
-      </div>
+      </section>
     </AppLayout>
   )
 }

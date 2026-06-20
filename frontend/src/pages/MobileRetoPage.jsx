@@ -4,8 +4,8 @@ import { mockReto, mockRanking } from '../services/mockService'
 export default function MobileRetoPage() {
   return (
     <MobileLayout title="Reto Activo" headerRight={<button className="icon-btn">👤</button>}>
-      <div className="alert alert-warning" style={{ marginBottom: '1rem', fontSize: '0.75rem', padding: '0.5rem' }}>
-        <span className="icon">ℹ</span><div>Datos mock</div>
+      <div className="alert alert-info" style={{ marginBottom: '1rem', fontSize: '0.75rem', padding: '0.5rem' }}>
+        <span className="icon">ℹ</span><div>Seguimiento de reto energético</div>
       </div>
 
       <div className="reto-banner">

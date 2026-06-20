@@ -13,5 +13,7 @@ public interface EnergyAnomalyRepository extends JpaRepository<EnergyAnomalyEnti
 
     List<EnergyAnomalyEntity> findTop20ByEstadoInOrderByMeasuredAtDesc(Collection<String> estados);
 
+    List<EnergyAnomalyEntity> findByReadingIdIn(Collection<UUID> readingIds);
+
     Optional<EnergyAnomalyEntity> findByTicketId(UUID ticketId);
 }

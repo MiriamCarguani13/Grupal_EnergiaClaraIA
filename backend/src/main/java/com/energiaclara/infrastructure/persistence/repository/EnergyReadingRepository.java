@@ -9,5 +9,7 @@ import java.util.UUID;
 public interface EnergyReadingRepository extends JpaRepository<EnergyReadingEntity, UUID> {
     List<EnergyReadingEntity> findTop20ByOrderByMeasuredAtDesc();
 
+    List<EnergyReadingEntity> findTop50ByOrderByMeasuredAtDesc();
+
     List<EnergyReadingEntity> findTop7ByTenantIdAndMedidorIdOrderByMeasuredAtDesc(UUID tenantId, UUID medidorId);
 }

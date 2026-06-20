@@ -10,6 +10,8 @@ import com.energiaclara.infrastructure.persistence.repository.EnergyAnomalyRepos
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Collection;
+import java.util.UUID;
 
 @Component
 public class EnergyAnomalyPersistenceAdapter implements SaveEnergyAnomalyPort, LoadAnomaliesPort {
@@ -30,6 +32,16 @@ public class EnergyAnomalyPersistenceAdapter implements SaveEnergyAnomalyPort, L
     @Override
     public List<EnergyAnomalyRecord> loadRecentAnomalies() {
         return anomalyRepository.findTop20ByEstadoInOrderByMeasuredAtDesc(VISIBLE_STATUSES).stream()
+                .map(this::toRecord)
+                .toList();
+    }
+
+    @Override
+    public List<EnergyAnomalyRecord> loadAnomaliesByReadingIds(Collection<UUID> readingIds) {
+        if (readingIds == null || readingIds.isEmpty()) {
+            return List.of();
+        }
+        return anomalyRepository.findByReadingIdIn(readingIds).stream()
                 .map(this::toRecord)
                 .toList();
     }

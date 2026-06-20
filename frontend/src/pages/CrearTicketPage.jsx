@@ -149,8 +149,8 @@ export default function CrearTicketPage() {
             <div className="alert alert-info">
               <span className="icon">✓</span>
               <div>
-                <strong>Técnico Demo</strong>
-                <p style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>Asignación demo controlada por backend.</p>
+                <strong>Técnico asignado por disponibilidad</strong>
+                <p style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>La asignación se confirma al registrar el ticket.</p>
               </div>
             </div>
           </div>

@@ -11,12 +11,12 @@ const ROLE_LABELS = {
 }
 
 const NAV_ITEMS = [
-  { to: '/dashboard', icon: '📊', label: 'Dashboard', roles: ['ADMIN_INSTITUCION', 'DIRECTOR', 'AUDITOR'] },
-  { to: '/lecturas', icon: '⚡', label: 'Lecturas', roles: ['ADMIN_INSTITUCION', 'DIRECTOR', 'AUDITOR'] },
-  { to: '/anomalias', icon: '🔍', label: 'Anomalías', roles: ['ADMIN_INSTITUCION', 'DIRECTOR', 'AUDITOR'] },
-  { to: '/tickets/nuevo', icon: '🔧', label: 'Tickets', roles: ['ADMIN_INSTITUCION'] },
-  { to: '/m/tickets', icon: '🛠', label: 'Mis tickets', roles: ['TECNICO'] },
-  { to: '/retos', icon: '🎯', label: 'Retos' },
+  { to: '/dashboard', label: 'Dashboard', roles: ['ADMIN_INSTITUCION', 'DIRECTOR', 'AUDITOR'] },
+  { to: '/lecturas', label: 'Lecturas', roles: ['ADMIN_INSTITUCION', 'DIRECTOR', 'AUDITOR'] },
+  { to: '/anomalias', label: 'Anomalías', roles: ['ADMIN_INSTITUCION', 'DIRECTOR', 'AUDITOR'] },
+  { to: '/mantenimiento', label: 'Mantenimiento', roles: ['ADMIN_INSTITUCION'] },
+  { to: '/m/tickets', label: 'Mantenimiento', roles: ['TECNICO'] },
+  { to: '/administracion', label: 'Administración' },
 ]
 
 export default function AppLayout({ title, children }) {
@@ -31,36 +31,35 @@ export default function AppLayout({ title, children }) {
 
   return (
     <div className="app-wrapper">
-      <aside className="sidebar">
-        <div className="sidebar-brand">
-          <span className="icon">⚡</span>
+      <header className="app-header">
+        <NavLink to={auth?.roles?.includes('TECNICO') ? '/m/tickets' : '/dashboard'} className="app-logo">
+          <span className="app-logo-mark">⚡</span>
           <span>EnergíaClara AI</span>
-        </div>
-        <nav className="sidebar-nav">
+        </NavLink>
+        <nav className="app-nav">
           {NAV_ITEMS.filter((item) => !item.roles || item.roles.some((role) => auth?.roles?.includes(role))).map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
-              className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}
+              className={({ isActive }) => 'app-nav-item' + (isActive ? ' active' : '')}
             >
-              <span className="icon">{item.icon}</span>
               {item.label}
             </NavLink>
           ))}
         </nav>
-      </aside>
-
-      <div className="main-content">
-        <header className="topbar">
-          <div className="topbar-title">{title}</div>
-          <div className="topbar-user">
+        <div className="app-header-user">
+          <div className="app-user-meta">
             <span className="user-email">{auth?.email}</span>
             <span className="role-badge">{roleLabel}</span>
-            <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}>
-              Salir
-            </button>
           </div>
-        </header>
+          <button onClick={handleLogout} className="btn btn-secondary app-logout">
+            Salir
+          </button>
+        </div>
+      </header>
+
+      <div className="main-content">
+        <div className="page-title-strip">{title}</div>
         <main className="page-content">{children}</main>
       </div>
     </div>
